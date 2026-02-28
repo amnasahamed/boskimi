@@ -24,6 +24,20 @@ const caseStudies = [
         color: "#22c55e",
     },
     {
+        slug: "clapslearn-ai",
+        title: "AI Front-Office Assistant",
+        client: "ClapsLearn",
+        desc: "An AI front-office assistant that handles inquiries from parents, tutors, and visitors, significantly reducing repetitive staff queries like a virtual receptionist.",
+        tags: ["AI Agent", "Education", "Automation"],
+        image: "/images/case-studies/clapslearn-ai/banner.png",
+        logo: "https://cdn.brandfetch.io/idGKjDPWnh/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1746853837154",
+        results: [
+            { label: "Query Resolution", value: "24/7", icon: Clock },
+            { label: "Staff Time Saved", value: "High", icon: TrendingUp },
+        ],
+        color: "#8b5cf6",
+    },
+    {
         slug: "badria-sweets",
         title: "AI-Powered WhatsApp Support",
         client: "Badria Sweets",
@@ -50,21 +64,6 @@ const caseStudies = [
             { label: "Sessions", value: "50K+", icon: TrendingUp },
         ],
         color: "#3b82f6",
-    },
-    {
-        slug: "clapslearn-ai",
-        title: "AI Front-Office Assistant",
-        client: "ClapsLearn",
-        desc: "An AI front-office assistant that handles inquiries from parents, tutors, and visitors, significantly reducing repetitive staff queries like a virtual receptionist.",
-        tags: ["AI Agent", "Education", "Automation"],
-        image: "https://clapslearn.com/images/hero-bg.jpg", // placeholder, can be updated later
-        logo: "https://cdn.brandfetch.io/idGKjDPWnh/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1746853837154",
-        results: [
-            { label: "Query Resolution", value: "24/7", icon: Clock },
-            { label: "Staff Time Saved", value: "High", icon: TrendingUp },
-        ],
-        color: "#8b5cf6",
-        externalLink: "https://clapslearn.com/",
     },
 ];
 

@@ -244,6 +244,35 @@ export function StellarPortfolio() {
               </div>
             </a>
 
+            {/* ClapsLearn AI Card */}
+            <a
+              href="/case-studies/clapslearn-ai"
+              className="group relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden border border-border/50 bg-card/50 transition-all hover:border-violet-500/50"
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+
+              <div className="absolute inset-0 bg-[url('/images/case-studies/clapslearn-ai/banner.png')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-violet-500/20 rounded-full blur-2xl group-hover:bg-violet-500/30 transition-colors" />
+
+              <div className="absolute top-8 left-8 w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-lg z-20">
+                <img
+                  src="https://cdn.brandfetch.io/idGKjDPWnh/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1746853837154"
+                  alt="ClapsLearn"
+                  className="object-contain w-full h-full"
+                />
+              </div>
+
+              <div className="absolute bottom-0 left-0 right-0 p-8 z-20 space-y-3">
+                <Badge variant="outline" className="border-violet-500 text-violet-400 bg-violet-500/10 backdrop-blur-sm">
+                  AI Assistant
+                </Badge>
+                <h4 className="text-3xl font-serif text-white">ClapsLearn</h4>
+                <p className="text-gray-300 line-clamp-2">
+                  An AI front-office assistant that handles inquiries from parents, tutors, and visitors, significantly reducing repetitive staff queries.
+                </p>
+              </div>
+            </a>
+
             {/* Badria Sweets Card */}
             <a
               href="/case-studies/badria-sweets"
@@ -282,30 +311,6 @@ export function StellarPortfolio() {
                 <h4 className="text-3xl font-serif text-white">ClapsBoard</h4>
                 <p className="text-gray-300 line-clamp-2">
                   Interactive whiteboard learning platform built for ClapsLearn.
-                </p>
-              </div>
-            </a>
-
-            {/* ClapsLearn AI Card */}
-            <a
-              href="https://clapslearn.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden border border-border/50 bg-card/50 transition-all hover:border-violet-500/50"
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-              
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.1),transparent_50%)] bg-cover bg-center group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute top-8 left-8 w-40 h-16 bg-[url('https://cdn.brandfetch.io/idGKjDPWnh/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1746853837154')] bg-contain bg-no-repeat bg-left z-20" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-violet-500/20 rounded-full blur-2xl group-hover:bg-violet-500/30 transition-colors" />
-
-              <div className="absolute bottom-0 left-0 right-0 p-8 z-20 space-y-3">
-                <Badge variant="outline" className="border-violet-500 text-violet-400 bg-violet-500/10 backdrop-blur-sm">
-                  AI Assistant
-                </Badge>
-                <h4 className="text-3xl font-serif text-white">ClapsLearn</h4>
-                <p className="text-gray-300 line-clamp-3">
-                  An AI front-office assistant that handles inquiries from parents, tutors, and visitors, significantly reducing repetitive staff queries.
                 </p>
               </div>
             </a>
