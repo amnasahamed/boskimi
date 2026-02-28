@@ -5,14 +5,8 @@ import { useRef } from "react";
 import Image from "next/image";
 
 const clients = [
-    { name: "TechCorp", logo: "/placeholder.svg" },
-    { name: "InnovateLabs", logo: "/placeholder.svg" },
-    { name: "FutureSystem", logo: "/placeholder.svg" },
-    { name: "AlphaWave", logo: "/placeholder.svg" },
-    { name: "NebulaSoft", logo: "/placeholder.svg" },
-    { name: "QuantumBits", logo: "/placeholder.svg" },
-    { name: "StellarNet", logo: "/placeholder.svg" },
-    { name: "CosmosData", logo: "/placeholder.svg" },
+    { name: "Pelago", logo: "/placeholder.svg", url: "https://pelagoconsultants.com/" },
+    { name: "ClapsLearn", logo: "/placeholder.svg", url: "https://clapslearn.com/" },
 ];
 
 export function ClientLogosGrid() {
@@ -30,10 +24,13 @@ export function ClientLogosGrid() {
                     Trusted by Industry Leaders
                 </motion.p>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                <div className="flex flex-wrap justify-center gap-12 md:gap-24">
                     {clients.map((client, index) => (
-                        <motion.div
+                        <motion.a
                             key={index}
+                            href={client.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: isInView ? 1 : 0.2, scale: isInView ? 1 : 0.9 }}
                             transition={{ delay: index * 0.05, duration: 0.5 }}
@@ -46,7 +43,7 @@ export function ClientLogosGrid() {
 
                             {/* Hover glow */}
                             <div className="absolute inset-0 bg-accent/5 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        </motion.div>
+                        </motion.a>
                     ))}
                 </div>
             </div>
