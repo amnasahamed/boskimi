@@ -93,9 +93,8 @@ export function HeroSection() {
     offset: ["start start", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  // Subtle parallax on scroll (no fade)
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   // Mouse parallax effect
   const mouseX = useMotionValue(0);
@@ -121,8 +120,23 @@ export function HeroSection() {
       ref={containerRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background"
     >
+      {/* Full-width Video Background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/videos/hero-bg.mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-background/70" />
+      </div>
+
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden z-[1]">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/10" />
         
         {/* Floating gradient orbs with mouse parallax */}
@@ -154,18 +168,99 @@ export function HeroSection() {
         <FloatingElement delay={2}>
           <div className="absolute top-1/2 right-20 w-16 h-16 bg-primary/5 rounded-full" />
         </FloatingElement>
+
+        {/* Animated flowing lines */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+          <motion.path
+            d="M0,200 Q400,100 800,200 T1600,200"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 3, ease: "easeInOut" }}
+          />
+          <motion.path
+            d="M0,400 Q400,500 800,400 T1600,400"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 3, delay: 0.5, ease: "easeInOut" }}
+          />
+          <motion.path
+            d="M200,0 Q300,300 200,600"
+            stroke="hsl(var(--accent))"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 2.5, delay: 1, ease: "easeInOut" }}
+          />
+          <motion.path
+            d="M1400,0 Q1300,300 1400,600"
+            stroke="hsl(var(--accent))"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 2.5, delay: 1.2, ease: "easeInOut" }}
+          />
+        </svg>
+
+        {/* Animated dots grid */}
+        <div className="absolute inset-0 overflow-hidden opacity-[0.04]">
+          {[...Array(6)].map((_, row) => (
+            <div key={row} className="flex justify-around" style={{ marginTop: row === 0 ? '15%' : '15%' }}>
+              {[...Array(8)].map((_, col) => (
+                <motion.div
+                  key={col}
+                  className="w-1 h-1 rounded-full bg-primary"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ 
+                    opacity: [0.3, 0.8, 0.3], 
+                    scale: [1, 1.5, 1],
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    delay: (row * 8 + col) * 0.1,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Subtle diagonal lines */}
+        <div className="absolute inset-0 overflow-hidden opacity-[0.02]">
+          <motion.div 
+            className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-primary to-transparent"
+            style={{ transform: 'rotate(15deg)', transformOrigin: 'top' }}
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div 
+            className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-accent to-transparent"
+            style={{ transform: 'rotate(-10deg)', transformOrigin: 'top' }}
+            animate={{ opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+        </div>
       </div>
 
       {/* Main Content */}
-      <motion.div style={{ y, opacity, scale }} className="relative z-10 w-full">
-        <div className="max-w-5xl mx-auto px-6 md:px-12 py-20 text-center">
+      <motion.div style={{ y }} className="relative z-10 w-full">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 py-16 sm:py-20 text-center">
           
           {/* Social Proof with stagger */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-6 mb-10"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-8 sm:mb-10"
           >
             {/* Animated avatar stack */}
             <motion.div 
@@ -182,7 +277,7 @@ export function HeroSection() {
                 },
               }}
             >
-              <div className="flex -space-x-3">
+              <div className="flex -space-x-2 sm:-space-x-3">
                 {[1, 2, 3, 4].map((i) => (
                   <motion.div
                     key={i}
@@ -191,21 +286,21 @@ export function HeroSection() {
                       visible: { opacity: 1, scale: 1, x: 0 },
                     }}
                     transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-background flex items-center justify-center"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-background flex items-center justify-center"
                   >
-                    <span className="text-xs font-medium text-primary">
+                    <span className="text-[10px] sm:text-xs font-medium text-primary">
                       {String.fromCharCode(64 + i)}
                     </span>
                   </motion.div>
                 ))}
               </div>
               <motion.div 
-                className="ml-3"
+                className="ml-2 sm:ml-3 text-left sm:text-left"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7 }}
               >
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5 sm:gap-1">
                   {[...Array(5)].map((_, i) => (
                     <motion.div
                       key={i}
@@ -213,11 +308,11 @@ export function HeroSection() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.8 + i * 0.05 }}
                     >
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-amber-400 text-amber-400" />
                     </motion.div>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground">from founders we&apos;ve helped</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">from founders we&apos;ve helped</p>
               </motion.div>
             </motion.div>
 
@@ -243,10 +338,10 @@ export function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-[1.1] tracking-tight mb-6"
+            className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-foreground leading-[1.1] tracking-tight mb-4 sm:mb-6"
           >
             <TextReveal delay={0.2}>Tired of Doing Work</TextReveal>
-            <br />
+            <br className="hidden sm:block" />
             <span className="italic text-primary">
               <TextReveal delay={0.4}>Software Should Do?</TextReveal>
             </span>
@@ -257,7 +352,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-2 sm:px-0"
           >
             We&apos;re a small team of engineers who build smart systems that handle the 
             repetitive stuff — so you and your team can focus on the work that actually matters.
@@ -276,7 +371,7 @@ export function HeroSection() {
                 },
               },
             }}
-            className="flex flex-wrap items-center justify-center gap-3 mb-10"
+            className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10 px-2 sm:px-0"
           >
             {[
               "Answering the same emails",
@@ -292,7 +387,7 @@ export function HeroSection() {
                 }}
                 transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                 whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--secondary))" }}
-                className="px-4 py-2 bg-secondary/50 rounded-full text-sm text-muted-foreground cursor-default transition-colors"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-secondary/50 rounded-full text-xs sm:text-sm text-muted-foreground cursor-default transition-colors"
               >
                 {pain}
               </motion.span>
@@ -309,19 +404,20 @@ export function HeroSection() {
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              className="w-full sm:w-auto"
             >
               <Link
                 href="#connect"
                 data-cursor="Let's Talk"
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:shadow-xl hover:shadow-primary/25 transition-all"
+                className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-primary text-primary-foreground rounded-full font-semibold text-base sm:text-lg hover:shadow-xl hover:shadow-primary/25 transition-all w-full sm:w-auto"
               >
-                <Calendar className="w-5 h-5" />
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Grab a Coffee (Virtually)</span>
                 <motion.span
                   animate={{ x: [0, 4, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.span>
               </Link>
             </motion.div>
@@ -329,7 +425,7 @@ export function HeroSection() {
             <motion.div whileHover={{ x: 5 }}>
               <Link
                 href="#work"
-                className="inline-flex items-center gap-2 text-foreground font-medium hover:text-primary transition-colors"
+                className="inline-flex items-center gap-2 text-foreground font-medium hover:text-primary transition-colors text-sm sm:text-base"
               >
                 <span>See what we&apos;ve built</span>
                 <ArrowRight className="w-4 h-4" />
@@ -350,7 +446,7 @@ export function HeroSection() {
                 },
               },
             }}
-            className="flex flex-wrap items-center justify-center gap-8"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8"
           >
             {[
               "No sales pitch",
@@ -363,7 +459,7 @@ export function HeroSection() {
                   hidden: { opacity: 0, y: 10 },
                   visible: { opacity: 1, y: 0 },
                 }}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
+                className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground"
               >
                 <CheckCircle className="w-4 h-4 text-green-500" />
                 {item}
@@ -376,7 +472,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.4 }}
-            className="mt-16 pt-8 border-t border-border/30 grid grid-cols-3 gap-8"
+            className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-border/30 grid grid-cols-3 gap-4 sm:gap-8"
           >
             {[
               { value: 147, suffix: "", label: "Projects shipped" },
@@ -391,13 +487,14 @@ export function HeroSection() {
                 whileHover={{ y: -5 }}
                 className="cursor-default"
               >
-                <div className="font-serif text-4xl text-foreground">
+                <div className="font-serif text-2xl sm:text-3xl md:text-4xl text-foreground">
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
+
         </div>
       </motion.div>
 

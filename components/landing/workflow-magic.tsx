@@ -6,14 +6,18 @@ import { Zap, MousePointerClick, Timer, CheckCircle2, Trophy } from "lucide-reac
 
 // Visual: Before - Manual chaos
 function BeforeChaosVisual({ isActive }: { isActive: boolean }) {
+  // Pre-defined rotations to avoid hydration mismatch (no Math.random() during render)
   const tasks = [
-    { x: 10, y: 20, icon: "📧", label: "Check email" },
-    { x: 30, y: 40, icon: "📋", label: "Copy to sheet" },
-    { x: 50, y: 25, icon: "🔍", label: "Look up order" },
-    { x: 20, y: 60, icon: "✏️", label: "Update CRM" },
-    { x: 60, y: 50, icon: "📤", label: "Send update" },
-    { x: 40, y: 75, icon: "⏰", label: "Wait for reply" },
+    { x: 10, y: 20, icon: "📧", label: "Check email", initialRotate: -5, finalRotate: -2 },
+    { x: 30, y: 40, icon: "📋", label: "Copy to sheet", initialRotate: 3, finalRotate: 1 },
+    { x: 50, y: 25, icon: "🔍", label: "Look up order", initialRotate: -8, finalRotate: -4 },
+    { x: 20, y: 60, icon: "✏️", label: "Update CRM", initialRotate: 7, finalRotate: 3 },
+    { x: 60, y: 50, icon: "📤", label: "Send update", initialRotate: -3, finalRotate: 2 },
+    { x: 40, y: 75, icon: "⏰", label: "Wait for reply", initialRotate: 5, finalRotate: -1 },
   ];
+
+  // Pre-defined curve offsets for arrows
+  const curveOffsets = [15, 25, 10, 20, 18];
 
   return (
     <div className="relative h-64 bg-red-500/5 border-2 border-dashed border-red-300 rounded-2xl overflow-hidden">
@@ -31,11 +35,11 @@ function BeforeChaosVisual({ isActive }: { isActive: boolean }) {
           key={i}
           className="absolute px-3 py-2 bg-white border border-red-200 rounded-lg shadow-sm text-xs"
           style={{ left: `${task.x}%`, top: `${task.y}%` }}
-          initial={{ opacity: 0, scale: 0, rotate: -10 + Math.random() * 20 }}
+          initial={{ opacity: 0, scale: 0, rotate: task.initialRotate }}
           animate={isActive ? { 
             opacity: 1, 
             scale: 1,
-            rotate: -5 + Math.random() * 10,
+            rotate: task.finalRotate,
           } : {}}
           transition={{ delay: i * 0.1 }}
         >
@@ -49,7 +53,7 @@ function BeforeChaosVisual({ isActive }: { isActive: boolean }) {
         {tasks.slice(0, -1).map((_, i) => (
           <motion.path
             key={i}
-            d={`M ${tasks[i].x + 10} ${tasks[i].y + 10} Q ${50 + Math.random() * 20} ${50} ${tasks[i + 1].x + 5} ${tasks[i + 1].y + 5}`}
+            d={`M ${tasks[i].x + 10} ${tasks[i].y + 10} Q ${50 + curveOffsets[i]} ${50} ${tasks[i + 1].x + 5} ${tasks[i + 1].y + 5}`}
             stroke="#fca5a5"
             strokeWidth="2"
             strokeDasharray="4 4"

@@ -43,35 +43,13 @@ function StatCard({ value, label, icon: Icon, delay }: { value: string; label: s
       className="relative group"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="relative p-6 bg-card/50 border border-border/50 rounded-2xl backdrop-blur-sm">
-        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-          <Icon className="w-6 h-6 text-primary" />
+      <div className="relative p-4 sm:p-6 bg-card/50 border border-border/50 rounded-xl sm:rounded-2xl backdrop-blur-sm">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-primary/20 transition-colors">
+          <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
         </div>
-        <div className="font-serif text-3xl text-foreground mb-1">{value}</div>
-        <div className="text-sm text-muted-foreground">{label}</div>
+        <div className="font-serif text-2xl sm:text-3xl text-foreground mb-1">{value}</div>
+        <div className="text-xs sm:text-sm text-muted-foreground">{label}</div>
       </div>
-    </motion.div>
-  );
-}
-
-// Team member avatar with personality
-function TeamAvatar({ emoji, role, delay }: { emoji: string; role: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay, type: "spring", stiffness: 200 }}
-      className="flex flex-col items-center"
-    >
-      <motion.div
-        className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-3xl shadow-lg border border-primary/10"
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        transition={{ duration: 0.2 }}
-      >
-        {emoji}
-      </motion.div>
-      <span className="text-xs text-muted-foreground mt-2">{role}</span>
     </motion.div>
   );
 }
@@ -87,9 +65,9 @@ export function WhoWeAre() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-12 lg:mb-20">
           {/* Left - Story */}
           <div>
             <motion.div
@@ -105,10 +83,10 @@ export function WhoWeAre() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1 }}
-              className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6"
+              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6"
             >
               Engineers Who Got
-              <br />
+              <br className="hidden sm:block" />
               <span className="italic text-primary">Tired of Waste</span>
             </motion.h2>
 
@@ -116,7 +94,7 @@ export function WhoWeAre() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2 }}
-              className="space-y-4 text-muted-foreground leading-relaxed text-lg"
+              className="space-y-4 text-muted-foreground leading-relaxed text-base sm:text-lg"
             >
               <p>
                 We&apos;ve worked at big tech companies, startups, and everything in between. 
@@ -134,127 +112,42 @@ export function WhoWeAre() {
               </p>
             </motion.div>
 
-            {/* Team avatars */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.3 }}
-              className="mt-8"
-            >
-              <div className="flex items-center gap-4 mb-3">
-                <div className="flex -space-x-3">
-                  <TeamAvatar emoji="👨‍💻" role="Engineer" delay={0.4} />
-                  <TeamAvatar emoji="👩‍💻" role="Designer" delay={0.5} />
-                  <TeamAvatar emoji="🧑‍💻" role="Architect" delay={0.6} />
-                  <TeamAvatar emoji="👨‍🎨" role="Builder" delay={0.7} />
-                </div>
-                <div className="ml-4 text-sm text-muted-foreground">
-                  <span className="text-foreground font-medium">4 core team members</span>
-                  <br />
-                  + specialized contractors
-                </div>
-              </div>
-            </motion.div>
           </div>
 
-          {/* Right - Visual composition */}
+          {/* Right - Video */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="relative"
+            className="relative order-first lg:order-last"
           >
-            {/* Main image container */}
-            <div className="relative">
-              <motion.div
-                className="aspect-square rounded-3xl bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10 p-1"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
+            <motion.div
+              className="aspect-[4/3] sm:aspect-video lg:aspect-square overflow-hidden relative rounded-lg sm:rounded-none"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+            >
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
               >
-                <div className="w-full h-full rounded-[22px] bg-card/50 backdrop-blur-sm border border-border/50 flex items-center justify-center relative overflow-hidden">
-                  {/* Abstract team illustration */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      className="relative"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                    >
-                      {[...Array(8)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-3 h-3 rounded-full bg-primary/30"
-                          style={{
-                            top: `${50 + 40 * Math.sin((i / 8) * Math.PI * 2)}%`,
-                            left: `${50 + 40 * Math.cos((i / 8) * Math.PI * 2)}%`,
-                          }}
-                        />
-                      ))}
-                    </motion.div>
-                  </div>
-                  
-                  {/* Center content */}
-                  <div className="relative z-10 text-center">
-                    <motion.div
-                      className="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl shadow-2xl mb-4"
-                      animate={{ 
-                        boxShadow: [
-                          "0 0 0 0 rgba(59, 130, 246, 0)",
-                          "0 0 40px 10px rgba(59, 130, 246, 0.2)",
-                          "0 0 0 0 rgba(59, 130, 246, 0)",
-                        ],
-                      }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      🚀
-                    </motion.div>
-                    <div className="font-serif text-2xl text-foreground">Base of Stars</div>
-                    <div className="text-sm text-muted-foreground">Est. 2024</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Floating stat cards */}
-              <motion.div
-                className="absolute -bottom-6 -left-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.6 }}
-              >
-                <div className="p-4 bg-card border border-border/50 rounded-2xl shadow-xl backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-foreground">Based in India</div>
-                      <div className="text-xs text-muted-foreground">Working worldwide</div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="absolute -top-6 -right-6"
-                initial={{ opacity: 0, y: -20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.7 }}
-              >
-                <div className="p-4 bg-card border border-border/50 rounded-2xl shadow-xl backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="text-3xl">☕</div>
-                    <div>
-                      <div className="text-sm font-medium text-foreground">Coffee lovers</div>
-                      <div className="text-xs text-muted-foreground">Fuel for code</div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+                <source src="/videos/who-we-are.mp4" type="video/mp4" />
+              </video>
+              {/* Edge fade masks - all 4 sides blending into background */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-x-0 top-0 h-8 sm:h-16 bg-gradient-to-b from-background to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-8 sm:h-16 bg-gradient-to-t from-background to-transparent" />
+                <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-background to-transparent" />
+                <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-background to-transparent" />
+              </div>
+            </motion.div>
           </motion.div>
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 lg:mb-20">
           <StatCard value="147" label="Projects shipped" icon={Heart} delay={0.1} />
           <StatCard value="50+" label="Happy clients" icon={Users} delay={0.2} />
           <StatCard value="4" label="Core team" icon={Sparkles} delay={0.3} />
@@ -269,8 +162,8 @@ export function WhoWeAre() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h3 className="font-serif text-3xl text-foreground mb-2">How We Work</h3>
-            <p className="text-muted-foreground">Our non-negotiables</p>
+            <h3 className="font-serif text-2xl sm:text-3xl text-foreground mb-2">How We Work</h3>
+            <p className="text-muted-foreground text-sm sm:text-base">Our non-negotiables</p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -290,21 +183,21 @@ export function WhoWeAre() {
                   style={{ backgroundColor: `${value.color}20` }}
                 />
                 
-                <div className="relative p-6 md:p-8 bg-card/50 border border-border/50 rounded-2xl backdrop-blur-sm h-full">
+                <div className="relative p-5 sm:p-6 lg:p-8 bg-card/50 border border-border/50 rounded-xl sm:rounded-2xl backdrop-blur-sm h-full">
                   <div 
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors"
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 transition-colors"
                     style={{ backgroundColor: `${value.color}15` }}
                   >
                     <value.icon 
-                      className="w-7 h-7 transition-colors"
+                      className="w-6 h-6 sm:w-7 sm:h-7 transition-colors"
                       style={{ color: value.color }}
                     />
                   </div>
                   
-                  <h4 className="font-serif text-xl text-foreground mb-3 group-hover:text-primary transition-colors">
+                  <h4 className="font-serif text-lg sm:text-xl text-foreground mb-2 sm:mb-3 group-hover:text-primary transition-colors">
                     {value.title}
                   </h4>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                     {value.description}
                   </p>
                 </div>
