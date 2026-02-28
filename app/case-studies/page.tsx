@@ -51,9 +51,26 @@ const caseStudies = [
         ],
         color: "#3b82f6",
     },
+    {
+        slug: "clapslearn-ai",
+        title: "AI Front-Office Assistant",
+        client: "ClapsLearn",
+        desc: "An AI front-office assistant that handles inquiries from parents, tutors, and visitors, significantly reducing repetitive staff queries like a virtual receptionist.",
+        tags: ["AI Agent", "Education", "Automation"],
+        image: "https://clapslearn.com/images/hero-bg.jpg", // placeholder, can be updated later
+        logo: "https://cdn.brandfetch.io/idGKjDPWnh/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1746853837154",
+        results: [
+            { label: "Query Resolution", value: "24/7", icon: Clock },
+            { label: "Staff Time Saved", value: "High", icon: TrendingUp },
+        ],
+        color: "#8b5cf6",
+        externalLink: "https://clapslearn.com/",
+    },
 ];
 
-function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: number }) {
+type CaseStudy = typeof caseStudies[0];
+
+function CaseStudyCard({ study, index }: { study: CaseStudy; index: number }) {
     return (
         <motion.div
             key={study.slug}
@@ -66,23 +83,41 @@ function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: 
             {/* Image Section */}
             <div className="relative h-56 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
-                <Image
-                    src={study.image}
-                    alt={study.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                
+                {study.image.startsWith("http") ? (
+                    <div
+                        className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
+                        style={{
+                            backgroundImage: `radial-gradient(circle at center, rgba(139,92,246,0.1), transparent 50%)`,
+                            backgroundColor: '#111'
+                        }}
+                    />
+                ) : (
+                    <Image
+                        src={study.image}
+                        alt={study.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                )}
+
                 {/* Client badge */}
                 <div className="absolute top-4 left-4 z-20 flex items-center gap-3">
                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-lg">
-                        <Image
-                            src={study.logo}
-                            alt={study.client}
-                            width={40}
-                            height={40}
-                            className="object-contain"
-                        />
+                        {study.logo.startsWith("http") ? (
+                            <img
+                                src={study.logo}
+                                alt={study.client}
+                                className="object-contain w-8 h-8"
+                            />
+                        ) : (
+                            <Image
+                                src={study.logo}
+                                alt={study.client}
+                                width={40}
+                                height={40}
+                                className="object-contain"
+                            />
+                        )}
                     </div>
                     <div>
                         <span className="font-medium text-white">{study.client}</span>
@@ -118,9 +153,9 @@ function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: 
 
                 <div className="flex flex-wrap gap-2">
                     {study.tags.map((tag) => (
-                        <Badge 
-                            key={tag} 
-                            variant="secondary" 
+                        <Badge
+                            key={tag}
+                            variant="secondary"
                             className="bg-secondary/50 hover:bg-primary/10 transition-colors"
                         >
                             {tag}
@@ -128,14 +163,27 @@ function CaseStudyCard({ study, index }: { study: typeof caseStudies[0]; index: 
                     ))}
                 </div>
 
-                <Link
-                    href={`/case-studies/${study.slug}`}
-                    className="inline-flex items-center gap-2 text-sm font-medium group/link"
-                    style={{ color: study.color }}
-                >
-                    Read Full Story 
-                    <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                </Link>
+                {study.externalLink ? (
+                    <a
+                        href={study.externalLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm font-medium group/link"
+                        style={{ color: study.color }}
+                    >
+                        Visit Website
+                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    </a>
+                ) : (
+                    <Link
+                        href={`/case-studies/${study.slug}`}
+                        className="inline-flex items-center gap-2 text-sm font-medium group/link"
+                        style={{ color: study.color }}
+                    >
+                        Read Full Story
+                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                )}
             </div>
         </motion.div>
     );
@@ -167,7 +215,7 @@ export default function CaseStudiesPage() {
                         </div>
                     </motion.div>
 
-                    <motion.h1 
+                    <motion.h1
                         className="text-5xl md:text-7xl font-serif"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -176,7 +224,7 @@ export default function CaseStudiesPage() {
                         Case Studies
                     </motion.h1>
 
-                    <motion.p 
+                    <motion.p
                         className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
