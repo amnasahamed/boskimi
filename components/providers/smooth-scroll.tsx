@@ -30,13 +30,18 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   const lenisRef = useRef<Lenis | null>(null)
 
   useEffect(() => {
+    // Disable smooth scroll on mobile for better performance
+    const isMobile = window.matchMedia("(max-width: 1024px)").matches
+    if (isMobile) return
+
     const lenisInstance = new Lenis({
-      duration: 1.2,
+      duration: 0.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      lerp: 0.1,
+      lerp: 0.08,
+      touchMultiplier: 1.5,
     })
 
     lenisRef.current = lenisInstance
@@ -60,10 +65,17 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
 
   const scrollTo = (target: string | number | HTMLElement) => {
     if (lenisRef.current) {
-      lenisRef.current.scrollTo(target, {
-        offset: 0,
-        duration: 1.2,
-      })
+      lenisRef.current.scrollTo(target, { offset: 0, duration: 0.8 })
+    } else {
+      // Fallback for mobile
+      if (typeof target === "string") {
+        const el = document.querySelector(target)
+        el?.scrollIntoView({ behavior: "smooth" })
+      } else if (typeof target === "number") {
+        window.scrollTo({ top: target, behavior: "smooth" })
+      } else if (target instanceof HTMLElement) {
+        target.scrollIntoView({ behavior: "smooth" })
+      }
     }
   }
 
