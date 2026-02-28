@@ -158,93 +158,56 @@ export function ConstellationNav() {
         </div>
       </motion.header>
 
-      {/* Mobile Menu - Full Screen Editorial */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-40 lg:hidden"
-          >
-            {/* Background */}
-            <motion.div 
-              initial={{ clipPath: "circle(0% at calc(100% - 40px) 40px)" }}
-              animate={{ clipPath: "circle(150% at calc(100% - 40px) 40px)" }}
-              exit={{ clipPath: "circle(0% at calc(100% - 40px) 40px)" }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 bg-background"
-            />
-            
-            {/* Menu Content */}
-            <nav className="relative h-full flex flex-col justify-center px-8">
-              <div className="space-y-2">
-                {navItems.map((item, i) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -40 }}
-                    transition={{ 
-                      delay: 0.2 + i * 0.1,
-                      duration: 0.5,
-                      ease: [0.22, 1, 0.36, 1]
-                    }}
-                  >
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className="group flex items-baseline gap-4 py-3"
-                    >
-                      <span className="mono-caption text-muted-foreground">
-                        0{i + 1}
-                      </span>
-                      <span className="font-serif text-5xl md:text-7xl text-foreground group-hover:text-primary transition-colors duration-300">
-                        {item.label}
-                      </span>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-              
-              {/* Bottom Info */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: 0.6 }}
-                className="absolute bottom-12 left-8 right-8"
+      {/* Mobile Menu - Full Screen */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-40 lg:hidden"
+          style={{ 
+            backgroundColor: 'white',
+            top: 0, left: 0, right: 0, bottom: 0 
+          }}
+        >
+          <nav className="px-6 pt-28 pb-8">
+            {navItems.map((item, i) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-4 py-4 border-b"
+                style={{ 
+                  borderColor: 'rgba(0,0,0,0.1)',
+                  textDecoration: 'none'
+                }}
               >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                  <Link
-                    href="/about#connect"
-                    onClick={() => setIsOpen(false)}
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-full font-sans font-medium"
-                  >
-                    Start a Project
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </Link>
-                  
-                  <div className="flex gap-8">
-                    <a href="#" className="mono-caption text-muted-foreground hover:text-foreground transition-colors">
-                      Twitter
-                    </a>
-                    <a href="#" className="mono-caption text-muted-foreground hover:text-foreground transition-colors">
-                      LinkedIn
-                    </a>
-                    <a href="#" className="mono-caption text-muted-foreground hover:text-foreground transition-colors">
-                      GitHub
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <span style={{ color: '#666', fontFamily: 'monospace', fontSize: '14px' }}>
+                  0{i + 1}
+                </span>
+                <span style={{ fontFamily: 'serif', color: '#111', fontSize: '28px' }}>
+                  {item.label}
+                </span>
+              </Link>
+            ))}
+            
+            <a
+              href="/about#connect"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-center gap-2 w-full px-6 py-4 rounded-full mt-8"
+              style={{ 
+                backgroundColor: '#111', 
+                color: '#fff',
+                textDecoration: 'none',
+                fontSize: '16px',
+                fontWeight: 500
+              }}
+            >
+              Start a Project
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
