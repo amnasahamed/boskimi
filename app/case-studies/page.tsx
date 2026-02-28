@@ -29,7 +29,7 @@ const caseStudies = [
         client: "ClapsLearn",
         desc: "An AI front-office assistant that handles inquiries from parents, tutors, and visitors, significantly reducing repetitive staff queries like a virtual receptionist.",
         tags: ["AI Agent", "Education", "Automation"],
-        image: "/images/case-studies/clapslearn-ai/banner.png",
+        image: "/images/case-studies/clapslearn-ai/clapslearn-chat-widget.png",
         logo: "https://cdn.brandfetch.io/idGKjDPWnh/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1746853837154",
         results: [
             { label: "Query Resolution", value: "24/7", icon: Clock },

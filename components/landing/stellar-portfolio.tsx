@@ -251,7 +251,7 @@ export function StellarPortfolio() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
 
-              <div className="absolute inset-0 bg-[url('/images/case-studies/clapslearn-ai/banner.png')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-[url('/images/case-studies/clapslearn-ai/clapslearn-chat-widget.png')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-violet-500/20 rounded-full blur-2xl group-hover:bg-violet-500/30 transition-colors" />
 
               <div className="absolute top-8 left-8 w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-lg z-20">

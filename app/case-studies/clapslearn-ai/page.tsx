@@ -155,7 +155,7 @@ export default function ClapsLearnAICaseStudy() {
                     >
                         <div className="relative w-full aspect-[4/3] sm:aspect-video bg-black rounded-xl border border-border/50 overflow-hidden shadow-2xl shadow-violet-500/20">
                             <Image
-                                src="/images/case-studies/clapslearn-ai/banner.png"
+                                src="/images/case-studies/clapslearn-ai/clapslearn-chat-widget.png"
                                 alt="ClapsLearn AI User Experience"
                                 fill
                                 className="object-cover object-left"
