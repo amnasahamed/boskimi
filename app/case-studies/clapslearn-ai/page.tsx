@@ -119,6 +119,52 @@ export default function ClapsLearnAICaseStudy() {
                 </div>
             </section>
 
+            {/* User Experience */}
+            <section className="relative py-16 px-6">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="space-y-6 order-2 md:order-1"
+                    >
+                        <h2 className="text-3xl md:text-4xl font-serif">Seamless User Experience</h2>
+                        <p className="text-muted-foreground leading-relaxed">
+                            Parents and students get an interactive front-office experience online. The AI chat widget handles multiple queries fluently, making it simple to ask about courses, tutors, and general organization details directly from the website.
+                        </p>
+                        <ul className="space-y-3">
+                            {[
+                                "Natural language understanding",
+                                "Instant automated responses",
+                                "Always-on accessibility",
+                                "Polite and brand-aligned persona"
+                            ].map((item, i) => (
+                                <li key={i} className="flex items-center gap-3 text-muted-foreground">
+                                    <CheckCircle2 className="w-5 h-5 text-violet-500" />
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="order-1 md:order-2 flex justify-center"
+                    >
+                        <div className="relative w-full aspect-[4/3] sm:aspect-video bg-black rounded-xl border border-border/50 overflow-hidden shadow-2xl shadow-violet-500/20">
+                            <Image
+                                src="/images/case-studies/clapslearn-ai/banner.png"
+                                alt="ClapsLearn AI User Experience"
+                                fill
+                                className="object-cover object-left"
+                            />
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* Architecture & Workflow */}
             <section className="relative py-24 px-6">
                 <div className="max-w-7xl mx-auto space-y-16">
