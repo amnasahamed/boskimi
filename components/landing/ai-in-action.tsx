@@ -2,152 +2,205 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { MessageCircle, Database, Send, Users, Sparkles } from "lucide-react";
+import { MessageCircle, Database, Send, Users, Sparkles, Zap, ArrowRight } from "lucide-react";
 
 // Visual component for Step 1: Message Coming In
 function MessageIncomingVisual({ isActive }: { isActive: boolean }) {
   const channels = [
-    { icon: "💬", label: "WhatsApp", color: "#25D366" },
-    { icon: "✉️", label: "Email", color: "#EA4335" },
-    { icon: "💻", label: "Website", color: "#6366f1" },
+    { icon: "💬", label: "WhatsApp", color: "#25D366", x: 15, y: 25 },
+    { icon: "✉️", label: "Email", color: "#EA4335", x: 70, y: 20 },
+    { icon: "💻", label: "Chat", color: "#6366f1", x: 75, y: 65 },
   ];
 
   return (
-    <div className="relative h-48 bg-gradient-to-br from-secondary/50 to-background rounded-2xl overflow-hidden">
+    <div className="relative h-44 bg-gradient-to-br from-green-50 to-white rounded-2xl overflow-hidden border border-green-100">
+      {/* Animated background pulse */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-green-400/10 to-green-400/0"
+        animate={isActive ? { x: ["-100%", "100%"] } : {}}
+        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+      />
+      
+      {/* Channel icons with notification badges */}
       {channels.map((channel, i) => (
         <motion.div
           key={i}
           className="absolute"
-          style={{ 
-            left: `${20 + i * 30}%`, 
-            top: `${30 + (i % 2) * 20}%`,
-          }}
-          initial={{ opacity: 0, scale: 0, x: -50 }}
-          animate={isActive ? { 
-            opacity: 1, 
-            scale: 1, 
-            x: 0,
-          } : {}}
-          transition={{ delay: i * 0.2, duration: 0.5 }}
+          style={{ left: `${channel.x}%`, top: `${channel.y}%` }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={isActive ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+          transition={{ delay: i * 0.15, type: "spring" }}
         >
           <motion.div
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-lg"
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow-lg"
             style={{ backgroundColor: channel.color }}
-            animate={isActive ? {
-              y: [0, -5, 0],
-            } : {}}
+            animate={isActive ? { y: [0, -4, 0] } : {}}
             transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
           >
             {channel.icon}
           </motion.div>
+          {/* Notification badge */}
           <motion.div
-            className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-background"
-            animate={isActive ? { scale: [1, 1.2, 1] } : {}}
-            transition={{ duration: 1, repeat: Infinity, delay: i * 0.3 }}
-          />
+            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-white"
+            initial={{ scale: 0 }}
+            animate={isActive ? { scale: [0, 1.2, 1] } : { scale: 0 }}
+            transition={{ delay: 0.5 + i * 0.2, duration: 0.4 }}
+          >
+            {i + 1}
+          </motion.div>
         </motion.div>
       ))}
       
-      {/* Central inbox */}
+      {/* Central unified inbox */}
       <motion.div
         className="absolute bottom-4 left-1/2 -translate-x-1/2"
-        initial={{ scale: 0 }}
-        animate={isActive ? { scale: 1 } : {}}
-        transition={{ delay: 0.8, type: "spring" }}
+        initial={{ scale: 0, y: 20 }}
+        animate={isActive ? { scale: 1, y: 0 } : { scale: 0, y: 20 }}
+        transition={{ delay: 0.6, type: "spring" }}
       >
-        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-xl">
-          <MessageCircle className="w-8 h-8 text-white" />
+        <div className="relative">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-xl">
+            <MessageCircle className="w-7 h-7 text-white" />
+          </div>
+          {/* Incoming pulse rings */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl border-2 border-green-400"
+            animate={isActive ? { scale: [1, 1.4], opacity: [0.5, 0] } : {}}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
         </div>
         <motion.div
-          className="absolute -top-2 -right-2 px-2 py-0.5 bg-accent text-accent-foreground text-xs font-bold rounded-full"
+          className="absolute -top-2 -right-2 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full"
           initial={{ scale: 0 }}
           animate={isActive ? { scale: 1 } : {}}
-          transition={{ delay: 1.2 }}
+          transition={{ delay: 1 }}
         >
-          3
+          +3
         </motion.div>
       </motion.div>
 
-      {/* Connecting lines */}
+      {/* Connection lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
-        {channels.map((_, i) => (
+        {channels.map((channel, i) => (
           <motion.path
             key={i}
-            d={`M ${50 + i * 30} ${60 + (i % 2) * 20} Q 50 100 50 140`}
-            stroke="hsl(var(--primary))"
+            d={`M ${channel.x + 5} ${channel.y + 5} Q 50 80 50 120`}
+            stroke={channel.color}
             strokeWidth="2"
             fill="none"
+            strokeDasharray="4 4"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={isActive ? { pathLength: 1, opacity: 0.3 } : {}}
-            transition={{ delay: 0.5 + i * 0.2, duration: 0.8 }}
+            animate={isActive ? { pathLength: 1, opacity: 0.4 } : { pathLength: 0, opacity: 0 }}
+            transition={{ delay: 0.3 + i * 0.15, duration: 0.6 }}
           />
         ))}
       </svg>
+
+      {/* Label */}
+      <motion.div
+        className="absolute top-3 left-3 text-[10px] font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full"
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8 }}
+      >
+        Multi-channel
+      </motion.div>
     </div>
   );
 }
 
 // Visual component for Step 2: AI Understanding
 function AIUnderstandingVisual({ isActive }: { isActive: boolean }) {
-  const keywords = ["order status", "refund", "shipping", "pricing", "support"];
+  const keywords = ["intent", "context", "history", "sentiment", "priority"];
   
   return (
-    <div className="relative h-48 bg-gradient-to-br from-violet-500/10 to-background rounded-2xl overflow-hidden flex items-center justify-center">
-      {/* Brain/AI center */}
+    <div className="relative h-44 bg-gradient-to-br from-violet-50 to-white rounded-2xl overflow-hidden border border-violet-100">
+      {/* Neural network background pattern */}
+      <div className="absolute inset-0 opacity-30">
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-violet-400 rounded-full"
+            style={{
+              left: `${20 + (i % 3) * 30}%`,
+              top: `${20 + Math.floor(i / 3) * 40}%`,
+            }}
+            animate={isActive ? { scale: [1, 2, 1], opacity: [0.5, 1, 0.5] } : {}}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+          />
+        ))}
+      </div>
+
+      {/* Brain center with pulse */}
       <motion.div
-        className="relative"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         initial={{ scale: 0 }}
         animate={isActive ? { scale: 1 } : {}}
         transition={{ type: "spring", delay: 0.2 }}
       >
         <motion.div
-          className="w-20 h-20 rounded-full bg-violet-500 flex items-center justify-center"
+          className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg"
           animate={isActive ? {
             boxShadow: [
               "0 0 0 0 rgba(139, 92, 246, 0.4)",
-              "0 0 0 20px rgba(139, 92, 246, 0)",
+              "0 0 0 15px rgba(139, 92, 246, 0)",
             ],
           } : {}}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <Sparkles className="w-10 h-10 text-white" />
+          <Sparkles className="w-8 h-8 text-white" />
         </motion.div>
+      </motion.div>
         
-        {/* Orbiting keywords */}
-        {keywords.map((keyword, i) => (
+      {/* Orbiting keywords */}
+      {keywords.map((keyword, i) => {
+        const angle = (i / keywords.length) * Math.PI * 2 - Math.PI / 2;
+        const radius = 55;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        
+        return (
           <motion.div
             key={i}
-            className="absolute px-3 py-1 bg-background rounded-full text-xs font-medium shadow-lg whitespace-nowrap"
-            style={{
-              top: "50%",
-              left: "50%",
-            }}
-            initial={{ x: "-50%", y: "-50%", scale: 0 }}
+            className="absolute top-1/2 left-1/2"
+            initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
             animate={isActive ? {
-              x: `calc(-50% + ${Math.cos((i / keywords.length) * Math.PI * 2) * 70}px)`,
-              y: `calc(-50% + ${Math.sin((i / keywords.length) * Math.PI * 2) * 70}px)`,
+              x: x,
+              y: y,
               scale: 1,
+              opacity: 1,
             } : {}}
-            transition={{ delay: 0.5 + i * 0.1, type: "spring" }}
+            transition={{ delay: 0.4 + i * 0.1, type: "spring" }}
           >
-            {keyword}
+            <div className="px-2.5 py-1 bg-white rounded-full text-[10px] font-medium shadow-md border border-violet-100 whitespace-nowrap -translate-x-1/2 -translate-y-1/2">
+              {keyword}
+            </div>
           </motion.div>
-        ))}
-      </motion.div>
+        );
+      })}
 
-      {/* Understanding indicator */}
+      {/* Processing indicator */}
       <motion.div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-violet-500/10 rounded-full"
-        initial={{ opacity: 0, y: 20 }}
+        className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 bg-violet-100 rounded-full"
+        initial={{ opacity: 0, y: 10 }}
         animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 1 }}
       >
         <motion.div
-          className="w-2 h-2 rounded-full bg-violet-500"
-          animate={{ scale: [1, 1.5, 1] }}
+          className="w-1.5 h-1.5 rounded-full bg-violet-500"
+          animate={{ scale: [1, 1.3, 1] }}
           transition={{ duration: 1, repeat: Infinity }}
         />
-        <span className="text-xs text-violet-600 font-medium">Understanding intent...</span>
+        <span className="text-[10px] font-medium text-violet-700">Analyzing...</span>
+      </motion.div>
+
+      <motion.div
+        className="absolute top-3 right-3 text-[10px] font-medium text-violet-600 bg-violet-100 px-2 py-1 rounded-full"
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8 }}
+      >
+        NLP Engine
       </motion.div>
     </div>
   );
@@ -156,23 +209,31 @@ function AIUnderstandingVisual({ isActive }: { isActive: boolean }) {
 // Visual component for Step 3: Data Fetching
 function DataFetchingVisual({ isActive }: { isActive: boolean }) {
   const systems = [
-    { name: "Shopify", icon: "🛒", x: 20, y: 30 },
-    { name: "Salesforce", icon: "☁️", x: 70, y: 20 },
-    { name: "Zendesk", icon: "🎫", x: 75, y: 60 },
-    { name: "Sheets", icon: "📊", x: 15, y: 65 },
+    { name: "Shopify", icon: "🛒", x: 12, y: 25 },
+    { name: "Salesforce", icon: "☁️", x: 72, y: 18 },
+    { name: "Zendesk", icon: "🎫", x: 78, y: 58 },
+    { name: "Database", icon: "🗄️", x: 8, y: 62 },
   ];
 
   return (
-    <div className="relative h-48 bg-gradient-to-br from-amber-500/10 to-background rounded-2xl overflow-hidden">
-      {/* Central database */}
+    <div className="relative h-44 bg-gradient-to-br from-amber-50 to-white rounded-2xl overflow-hidden border border-amber-100">
+      {/* Central hub */}
       <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
         initial={{ scale: 0 }}
         animate={isActive ? { scale: 1 } : {}}
         transition={{ type: "spring" }}
       >
-        <div className="w-16 h-16 rounded-xl bg-amber-500 flex items-center justify-center shadow-xl">
-          <Database className="w-8 h-8 text-white" />
+        <div className="relative">
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-xl">
+            <Database className="w-7 h-7 text-white" />
+          </div>
+          {/* Rotating ring */}
+          <motion.div
+            className="absolute inset-0 rounded-xl border-2 border-dashed border-amber-300"
+            animate={isActive ? { rotate: 360 } : {}}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          />
         </div>
       </motion.div>
 
@@ -184,22 +245,22 @@ function DataFetchingVisual({ isActive }: { isActive: boolean }) {
           style={{ left: `${system.x}%`, top: `${system.y}%` }}
           initial={{ scale: 0, opacity: 0 }}
           animate={isActive ? { scale: 1, opacity: 1 } : {}}
-          transition={{ delay: i * 0.15 }}
+          transition={{ delay: 0.2 + i * 0.1, type: "spring" }}
         >
           <motion.div
-            className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center text-lg shadow-md"
+            className="w-10 h-10 rounded-lg bg-white border border-amber-200 flex items-center justify-center text-lg shadow-md"
             animate={isActive ? { 
               boxShadow: [
                 "0 0 0 0 rgba(245, 158, 11, 0)",
-                "0 0 0 4px rgba(245, 158, 11, 0.2)",
+                "0 0 0 4px rgba(245, 158, 11, 0.15)",
                 "0 0 0 0 rgba(245, 158, 11, 0)",
               ],
             } : {}}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
           >
             {system.icon}
           </motion.div>
-          <div className="text-[10px] text-center mt-1 text-muted-foreground">{system.name}</div>
+          <div className="text-[9px] text-center mt-1 font-medium text-amber-700">{system.name}</div>
         </motion.div>
       ))}
 
@@ -213,29 +274,39 @@ function DataFetchingVisual({ isActive }: { isActive: boolean }) {
             x2="50%"
             y2="50%"
             stroke="#f59e0b"
-            strokeWidth="2"
-            strokeDasharray="4 4"
+            strokeWidth="1.5"
+            strokeDasharray="3 3"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={isActive ? { pathLength: 1, opacity: 0.5 } : {}}
-            transition={{ delay: 0.5 + i * 0.1, duration: 0.8 }}
+            animate={isActive ? { pathLength: 1, opacity: 0.4 } : {}}
+            transition={{ delay: 0.4 + i * 0.1, duration: 0.5 }}
           />
         ))}
       </svg>
 
-      {/* Data packets */}
-      {systems.map((_, i) => (
+      {/* Animated data packets flowing to center */}
+      {systems.map((system, i) => (
         <motion.div
           key={`packet-${i}`}
-          className="absolute w-2 h-2 rounded-full bg-amber-500"
-          style={{ left: `${systems[i].x + 5}%`, top: `${systems[i].y + 5}%` }}
+          className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 z-20"
+          style={{ left: `${system.x + 5}%`, top: `${system.y + 5}%` }}
           animate={isActive ? {
-            left: [`${systems[i].x + 5}%`, "50%"],
-            top: [`${systems[i].y + 5}%`, "50%"],
+            left: [`${system.x + 5}%`, "50%"],
+            top: [`${system.y + 5}%`, "50%"],
             opacity: [1, 0],
+            scale: [1, 0.5],
           } : {}}
-          transition={{ delay: 1 + i * 0.2, duration: 0.8, repeat: Infinity, repeatDelay: 1 }}
+          transition={{ delay: 0.8 + i * 0.15, duration: 0.8, repeat: Infinity, repeatDelay: 0.5 }}
         />
       ))}
+
+      <motion.div
+        className="absolute top-3 left-3 text-[10px] font-medium text-amber-700 bg-amber-100 px-2 py-1 rounded-full"
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8 }}
+      >
+        Real-time sync
+      </motion.div>
     </div>
   );
 }
@@ -243,77 +314,113 @@ function DataFetchingVisual({ isActive }: { isActive: boolean }) {
 // Visual component for Step 4: Response Generation
 function ResponseGenerationVisual({ isActive }: { isActive: boolean }) {
   return (
-    <div className="relative h-48 bg-gradient-to-br from-pink-500/10 to-background rounded-2xl overflow-hidden p-4">
-      {/* Message bubble being typed */}
-      <motion.div
-        className="max-w-[80%] bg-pink-500 text-white rounded-2xl rounded-tl-sm p-4 shadow-lg"
-        initial={{ width: 0, opacity: 0 }}
-        animate={isActive ? { width: "100%", opacity: 1 } : {}}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
+    <div className="relative h-44 bg-gradient-to-br from-pink-50 to-white rounded-2xl overflow-hidden border border-pink-100 p-3">
+      {/* Message bubbles */}
+      <div className="space-y-2">
+        {/* User message */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={isActive ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
+          className="flex justify-end"
+          initial={{ opacity: 0, x: 20 }}
+          animate={isActive ? { opacity: 1, x: 0 } : {}}
+          transition={{ delay: 0.2 }}
         >
-          Your order #12345 shipped yesterday! Track it here: bit.ly/track-123 🚚
+          <div className="max-w-[85%] px-3 py-2 bg-gray-100 rounded-2xl rounded-tr-sm text-xs text-gray-700">
+            Where&apos;s my order?
+          </div>
         </motion.div>
-      </motion.div>
 
-      {/* Typing indicator */}
-      <AnimatePresence>
-        {isActive && (
-          <motion.div
-            className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-2 bg-background rounded-full shadow-md"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-          >
-            <span className="text-xs text-muted-foreground">Generating response</span>
-            <div className="flex gap-1">
+        {/* AI typing / response */}
+        <motion.div
+          className="flex justify-start"
+          initial={{ opacity: 0, x: -20 }}
+          animate={isActive ? { opacity: 1, x: 0 } : {}}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="max-w-[90%]">
+            {/* Typing indicator then message */}
+            <AnimatePresence mode="wait">
+              {isActive ? (
+                <motion.div
+                  key="message"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 1.2 }}
+                  className="px-3 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-2xl rounded-tl-sm text-xs shadow-lg"
+                >
+                  Your order #12345 shipped yesterday! 🚚 Track: bit.ly/track-123
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.5 }}
+                    className="mt-1 pt-1 border-t border-white/20 flex items-center gap-1 text-[9px] text-white/80"
+                  >
+                    <Zap className="w-3 h-3" />
+                    Fetched from Shopify
+                  </motion.div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+            
+            {/* Typing dots */}
+            <motion.div
+              className="px-3 py-2 bg-white rounded-2xl rounded-tl-sm shadow-md inline-flex items-center gap-1"
+              animate={isActive ? { opacity: [1, 0] } : { opacity: 0 }}
+              transition={{ delay: 1.1, duration: 0.1 }}
+            >
               {[0, 1, 2].map((i) => (
                 <motion.span
                   key={i}
-                  className="w-1.5 h-1.5 rounded-full bg-pink-500"
+                  className="w-1.5 h-1.5 rounded-full bg-pink-400"
                   animate={{ opacity: [0.3, 1, 0.3] }}
-                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
                 />
               ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
 
-      {/* Speed indicator */}
+      {/* Speed badge */}
       <motion.div
-        className="absolute top-4 right-4 px-3 py-1.5 bg-green-500/10 rounded-full"
+        className="absolute top-3 right-3 px-2 py-1 bg-green-100 rounded-full flex items-center gap-1"
         initial={{ opacity: 0, scale: 0 }}
         animate={isActive ? { opacity: 1, scale: 1 } : {}}
-        transition={{ delay: 1.2, type: "spring" }}
+        transition={{ delay: 1.8, type: "spring" }}
       >
-        <span className="text-xs font-bold text-green-600">1.2s</span>
+        <Zap className="w-3 h-3 text-green-600" />
+        <span className="text-[10px] font-bold text-green-700">1.2s</span>
       </motion.div>
 
-      {/* Sparkles */}
-      {[...Array(5)].map((_, i) => (
+      {/* Sparkle effects */}
+      {[...Array(4)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-pink-400"
+          className="absolute text-yellow-400 text-sm"
           style={{
-            right: `${10 + i * 15}%`,
-            top: `${20 + (i % 2) * 30}%`,
+            right: `${8 + i * 20}%`,
+            top: `${15 + (i % 2) * 60}%`,
           }}
           initial={{ opacity: 0, scale: 0 }}
           animate={isActive ? { 
             opacity: [0, 1, 0],
             scale: [0.5, 1, 0.5],
-            rotate: [0, 180, 360],
+            rotate: [0, 90, 180],
           } : {}}
-          transition={{ delay: 1.5 + i * 0.1, duration: 1.5, repeat: Infinity }}
+          transition={{ delay: 2 + i * 0.1, duration: 1.5, repeat: Infinity }}
         >
           ✨
         </motion.div>
       ))}
+
+      <motion.div
+        className="absolute bottom-3 left-3 text-[10px] font-medium text-pink-600 bg-pink-100 px-2 py-1 rounded-full"
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8 }}
+      >
+        On-brand voice
+      </motion.div>
     </div>
   );
 }
@@ -321,77 +428,118 @@ function ResponseGenerationVisual({ isActive }: { isActive: boolean }) {
 // Visual component for Step 5: Human Handoff
 function HumanHandoffVisual({ isActive }: { isActive: boolean }) {
   return (
-    <div className="relative h-48 bg-gradient-to-br from-purple-500/10 to-background rounded-2xl overflow-hidden">
-      {/* AI side */}
-      <motion.div
-        className="absolute left-4 top-1/2 -translate-y-1/2"
-        initial={{ x: -50, opacity: 0 }}
-        animate={isActive ? { x: 0, opacity: 1 } : {}}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="w-14 h-14 rounded-2xl bg-purple-500 flex items-center justify-center shadow-lg">
-          <Sparkles className="w-7 h-7 text-white" />
-        </div>
-        <div className="text-xs text-center mt-2 text-muted-foreground">AI Agent</div>
-      </motion.div>
-
-      {/* Human side */}
-      <motion.div
-        className="absolute right-4 top-1/2 -translate-y-1/2"
-        initial={{ x: 50, opacity: 0 }}
-        animate={isActive ? { x: 0, opacity: 1 } : {}}
-        transition={{ delay: 0.4 }}
-      >
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
-          <Users className="w-7 h-7 text-white" />
-        </div>
-        <div className="text-xs text-center mt-2 text-muted-foreground">Your Team</div>
-      </motion.div>
-
-      {/* Handoff arrow */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={isActive ? { opacity: 1, scale: 1 } : {}}
-        transition={{ delay: 0.6, type: "spring" }}
-      >
+    <div className="relative h-44 bg-gradient-to-br from-indigo-50 to-white rounded-2xl overflow-hidden border border-indigo-100">
+      {/* Two sides with handoff arrow */}
+      <div className="absolute inset-0 flex items-center justify-between px-4">
+        {/* AI Agent */}
         <motion.div
-          className="flex items-center gap-2 px-4 py-2 bg-background border border-purple-200 rounded-full shadow-md"
-          animate={isActive ? { x: [0, 10, 0] } : {}}
-          transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
+          className="flex flex-col items-center"
+          initial={{ x: -30, opacity: 0 }}
+          animate={isActive ? { x: 0, opacity: 1 } : {}}
+          transition={{ delay: 0.2 }}
         >
-          <span className="text-xs font-medium text-purple-600">Context transferred</span>
-          <Send className="w-3 h-3 text-purple-500" />
+          <div className="relative">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <motion.div
+              className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-400 rounded-full flex items-center justify-center"
+              animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              <span className="text-[8px] text-white">AI</span>
+            </motion.div>
+          </div>
+          <span className="text-[10px] mt-2 font-medium text-indigo-700">AI Agent</span>
         </motion.div>
+
+        {/* Transfer animation */}
+        <motion.div
+          className="flex-1 flex flex-col items-center justify-center px-2"
+          initial={{ opacity: 0 }}
+          animate={isActive ? { opacity: 1 } : {}}
+          transition={{ delay: 0.5 }}
+        >
+          {/* Context cards transferring */}
+          <div className="relative h-16 w-full">
+            {["Context", "History", "Priority"].map((item, i) => (
+              <motion.div
+                key={i}
+                className="absolute left-0 px-2 py-1 bg-white rounded-lg text-[9px] font-medium text-indigo-700 border border-indigo-100 shadow-sm whitespace-nowrap"
+                style={{ top: `${i * 18}px` }}
+                initial={{ x: 0, opacity: 0 }}
+                animate={isActive ? { 
+                  x: [0, 60, 60],
+                  opacity: [0, 1, 0],
+                } : {}}
+                transition={{ 
+                  delay: 0.8 + i * 0.2, 
+                  duration: 1.5, 
+                  repeat: Infinity,
+                  times: [0, 0.5, 1]
+                }}
+              >
+                {item}
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Arrow */}
+          <motion.div
+            className="flex items-center gap-1 mt-1"
+            animate={isActive ? { x: [0, 5, 0] } : {}}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <div className="h-0.5 w-8 bg-gradient-to-r from-indigo-400 to-indigo-300 rounded-full" />
+            <ArrowRight className="w-4 h-4 text-indigo-500" />
+          </motion.div>
+          
+          <span className="text-[9px] text-indigo-500 mt-1 font-medium">Seamless handoff</span>
+        </motion.div>
+
+        {/* Human Team */}
+        <motion.div
+          className="flex flex-col items-center"
+          initial={{ x: 30, opacity: 0 }}
+          animate={isActive ? { x: 0, opacity: 1 } : {}}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="relative">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+            {/* Notification */}
+            <motion.div
+              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[8px] font-bold text-white border-2 border-white"
+              initial={{ scale: 0 }}
+              animate={isActive ? { scale: 1 } : {}}
+              transition={{ delay: 1.5, type: "spring" }}
+            >
+              1
+            </motion.div>
+          </div>
+          <span className="text-[10px] mt-2 font-medium text-blue-700">Your Team</span>
+        </motion.div>
+      </div>
+
+      {/* Suggested reply preview */}
+      <motion.div
+        className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-indigo-100 rounded-lg text-[9px] text-indigo-700 max-w-[90%] truncate"
+        initial={{ opacity: 0, y: 10 }}
+        animate={isActive ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 1.8 }}
+      >
+        <span className="font-medium">Suggested:</span> Offer refund or replacement...
       </motion.div>
 
-      {/* Context cards flowing */}
-      {["Conversation", "Customer Data", "Suggested Reply"].map((item, i) => (
-        <motion.div
-          key={i}
-          className="absolute left-20 px-3 py-1.5 bg-purple-500/10 rounded-lg text-xs text-purple-700 border border-purple-200"
-          style={{ top: `${25 + i * 25}%` }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={isActive ? { opacity: 1, x: 0 } : {}}
-          transition={{ delay: 0.8 + i * 0.15 }}
-        >
-          {item}
-        </motion.div>
-      ))}
-
-      {/* Connection line */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none">
-        <motion.path
-          d="M 70 80 Q 150 80 180 80"
-          stroke="#8b5cf6"
-          strokeWidth="2"
-          strokeDasharray="6 6"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={isActive ? { pathLength: 1 } : {}}
-          transition={{ delay: 0.5, duration: 0.8 }}
-        />
-      </svg>
+      <motion.div
+        className="absolute top-3 left-3 text-[10px] font-medium text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full"
+        initial={{ opacity: 0 }}
+        animate={isActive ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8 }}
+      >
+        Smart escalation
+      </motion.div>
     </div>
   );
 }
@@ -402,7 +550,7 @@ const steps = [
     title: "Message Comes In",
     description: "Customer reaches out via WhatsApp, email, chat, or your website — any channel, any time",
     visual: MessageIncomingVisual,
-    color: "#25D366",
+    color: "#22c55e",
   },
   {
     number: "02",
@@ -450,7 +598,8 @@ export function AIInAction() {
 
   return (
     <section ref={containerRef} className="relative py-24 md:py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background" />
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-slate-50/50 to-background" />
       
       <div className="relative max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -474,10 +623,19 @@ export function AIInAction() {
             <br />
             <span className="italic text-primary">Actually Works</span>
           </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2 }}
+            className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg"
+          >
+            From first message to perfect response — see the magic happen in real-time
+          </motion.p>
         </div>
 
         {/* Steps Grid */}
-        <div className="grid md:grid-cols-5 gap-6">
+        <div className="grid md:grid-cols-5 gap-4">
           {steps.map((step, index) => {
             const VisualComponent = step.visual;
             const isActive = activeStep === index;
@@ -488,46 +646,58 @@ export function AIInAction() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: index * 0.1 }}
-                className={`relative cursor-pointer transition-all duration-300 ${
-                  isActive ? "md:col-span-1" : "md:col-span-1 opacity-60 hover:opacity-100"
+                className={`relative cursor-pointer transition-all duration-500 ${
+                  isActive ? "opacity-100" : "opacity-60 hover:opacity-90"
                 }`}
                 onClick={() => setActiveStep(index)}
               >
-                {/* Step number badge */}
+                {/* Card container */}
                 <motion.div
-                  className="absolute -top-3 left-4 px-2 py-1 text-xs font-bold rounded-full z-10"
-                  style={{ 
-                    backgroundColor: isActive ? step.color : "hsl(var(--muted))",
-                    color: isActive ? "white" : "hsl(var(--muted-foreground))"
+                  className="relative rounded-3xl overflow-hidden"
+                  animate={{ 
+                    y: isActive ? -8 : 0,
+                    boxShadow: isActive 
+                      ? `0 20px 40px -12px ${step.color}30` 
+                      : "0 4px 6px -1px rgba(0, 0, 0, 0.05)"
                   }}
-                  animate={{ scale: isActive ? 1.1 : 1 }}
+                  transition={{ duration: 0.4 }}
                 >
-                  {step.number}
+                  {/* Step number badge */}
+                  <motion.div
+                    className="absolute -top-0 left-4 px-3 py-1 text-xs font-bold rounded-b-lg z-20"
+                    style={{ 
+                      backgroundColor: isActive ? step.color : "#e5e7eb",
+                      color: isActive ? "white" : "#6b7280"
+                    }}
+                    animate={{ scale: isActive ? 1.05 : 1 }}
+                  >
+                    {step.number}
+                  </motion.div>
+
+                  {/* Visual */}
+                  <VisualComponent isActive={isActive} />
+
+                  {/* Content */}
+                  <div className="p-4 bg-white border-t border-gray-100">
+                    <motion.h3
+                      className="font-serif text-base text-foreground mb-1.5 transition-colors duration-300"
+                      style={{ color: isActive ? step.color : undefined }}
+                    >
+                      {step.title}
+                    </motion.h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
                 </motion.div>
 
-                {/* Visual */}
-                <div className="mb-4">
-                  <VisualComponent isActive={isActive} />
-                </div>
-
-                {/* Content */}
-                <motion.h3
-                  className="font-serif text-lg text-foreground mb-2"
-                  animate={{ color: isActive ? step.color : "hsl(var(--foreground))" }}
-                >
-                  {step.title}
-                </motion.h3>
-                <p className="text-sm text-muted-foreground">
-                  {step.description}
-                </p>
-
-                {/* Active indicator */}
+                {/* Active indicator bar */}
                 <motion.div
-                  className="mt-4 h-1 rounded-full"
+                  className="mt-3 h-1 rounded-full mx-4"
                   style={{ backgroundColor: step.color }}
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.4 }}
                 />
               </motion.div>
             );
@@ -539,15 +709,28 @@ export function AIInAction() {
           {steps.map((step, i) => (
             <motion.button
               key={i}
-              className="w-2 h-2 rounded-full transition-all"
+              className="w-2.5 h-2.5 rounded-full transition-all duration-300"
               style={{ 
-                backgroundColor: activeStep === i ? step.color : "hsl(var(--muted))",
+                backgroundColor: activeStep === i ? step.color : "#e5e7eb",
               }}
-              animate={{ scale: activeStep === i ? 1.5 : 1 }}
+              animate={{ scale: activeStep === i ? 1.3 : 1 }}
+              whileHover={{ scale: 1.2 }}
               onClick={() => setActiveStep(i)}
             />
           ))}
         </div>
+
+        {/* Auto-play indicator */}
+        <motion.div 
+          className="mt-6 text-center"
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1 }}
+        >
+          <span className="text-xs text-muted-foreground">
+            Auto-playing • Click any step to explore
+          </span>
+        </motion.div>
       </div>
     </section>
   );

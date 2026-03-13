@@ -19,6 +19,8 @@ import { BeforeAfter } from "@/components/landing/before-after";
 import { TestimonialsCarousel } from "@/components/ui/testimonials-carousel";
 import { GuaranteeSection } from "@/components/landing/guarantee-section";
 import { FAQSection } from "@/components/landing/faq-section";
+import { CosmicTransition } from "@/components/landing/cosmic-transition";
+import { SystemsCore } from "@/components/landing/systems-core";
 
 export default function Home() {
   return (
@@ -29,8 +31,10 @@ export default function Home() {
 
       <ConstellationNav />
       <HeroSection />
+      <CosmicTransition />
       <WhoWeAre />
       <ServicesUniverse />
+      <SystemsCore />
       <AIInAction />
       <WorkflowMagic />
       <TechStackMarquee />
