@@ -105,8 +105,15 @@ export function GlobalImpact() {
 
     const interval = setInterval(() => {
       setDataPackets(prev => 
-        prev.map(p => ({ ...p, progress: p.progress + 0.05 }))
-            .filter(p => p.progress < 1)
+        // ⚡ Bolt: Replaced O(N) map().filter() chain with a single-pass reduce
+        // to minimize array allocations and GC pressure in this high-frequency (50ms) interval
+        prev.reduce((acc, p) => {
+          const newProgress = p.progress + 0.05;
+          if (newProgress < 1) {
+            acc.push({ ...p, progress: newProgress });
+          }
+          return acc;
+        }, [] as typeof prev)
       );
     }, 50);
 
