@@ -1,0 +1,3 @@
+## 2024-03-24 - Debouncing Canvas Resize Events
+**Learning:** Resizing the window triggers the `resize` event multiple times per second. In components that utilize `<canvas>` for animations (like `StarfieldBackground` and `CosmicDust`), recalculating canvas dimensions and re-initializing particle/star arrays on every single frame causes extreme UI jank and massive CPU spikes. This is a critical performance bottleneck for this architecture which relies heavily on background particle animations.
+**Action:** Always wrap `canvas` element re-initialization and `window.innerHeight/innerWidth` recalculations within a debouncer (e.g. `setTimeout` for 200ms) inside `resize` event listeners.
