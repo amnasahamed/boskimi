@@ -104,10 +104,21 @@ export function GlobalImpact() {
     if (dataPackets.length === 0) return;
 
     const interval = setInterval(() => {
-      setDataPackets(prev => 
-        prev.map(p => ({ ...p, progress: p.progress + 0.05 }))
-            .filter(p => p.progress < 1)
-      );
+      setDataPackets(prev => {
+        // ⚡ Bolt: Replaced chained .map().filter() with a single-pass for loop
+        // This prevents creating an intermediate array on every 50ms tick,
+        // and avoids the overhead of a function call per element,
+        // significantly reducing garbage collection pressure in this hot path.
+        const nextPackets: Array<{id: number, connection: number, progress: number}> = [];
+        for (let i = 0; i < prev.length; i++) {
+          const p = prev[i];
+          const nextProgress = p.progress + 0.05;
+          if (nextProgress < 1) {
+            nextPackets.push({ ...p, progress: nextProgress });
+          }
+        }
+        return nextPackets;
+      });
     }, 50);
 
     return () => clearInterval(interval);
