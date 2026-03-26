@@ -1,0 +1,3 @@
+## 2024-05-24 - Canvas Resize Debouncing
+**Learning:** In canvas-based components like `StarfieldBackground` and `CosmicDust`, attaching heavy array re-initialization directly to the `window.resize` event without debouncing causes excessive CPU spikes and garbage collection pressure because the event fires rapidly during window resizing.
+**Action:** Always wrap `resize` event listeners for canvas background animations in a debounce function (e.g., using a 200ms `setTimeout`) to prevent thrashing and improve rendering performance during window resizing.

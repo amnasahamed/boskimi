@@ -17,13 +17,24 @@ export function CosmicDust() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        let resizeTimeoutId: NodeJS.Timeout;
         // Check if mobile
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
         };
+
+        // Debounce resize to avoid excessive state updates
+        const handleResize = () => {
+            clearTimeout(resizeTimeoutId);
+            resizeTimeoutId = setTimeout(checkMobile, 200);
+        };
+
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeoutId);
+        };
     }, []);
 
     useEffect(() => {
@@ -44,10 +55,20 @@ export function CosmicDust() {
         const targetFPS = isMobile ? 20 : 60;
         const frameInterval = 1000 / targetFPS;
 
+        let resizeTimeoutId: NodeJS.Timeout;
+
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
+        };
+
+        // Debounce resize to prevent excessive array re-initialization and CPU spikes
+        const handleResize = () => {
+            clearTimeout(resizeTimeoutId);
+            resizeTimeoutId = setTimeout(() => {
+                resizeCanvas();
+            }, 200);
         };
 
         const initParticles = () => {
@@ -117,15 +138,16 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
+            clearTimeout(resizeTimeoutId);
         };
     }, [isMobile]);
 
