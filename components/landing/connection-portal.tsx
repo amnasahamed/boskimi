@@ -15,9 +15,16 @@ export function ConnectionPortal() {
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    setIsSubmitting(false);
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 3000);
   };
@@ -85,60 +92,74 @@ export function ConnectionPortal() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Your Name</label>
+                  <label htmlFor="name" className="block text-sm text-muted-foreground mb-2">Your Name</label>
                   <input
+                    id="name"
                     type="text"
                     required
                     value={formState.name}
                     onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                    className="w-full bg-background/50 border border-border focus:border-primary outline-none py-3 px-4 rounded-xl text-foreground transition-all"
+                    className="w-full bg-background/50 border border-border focus:border-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 py-3 px-4 rounded-xl text-foreground transition-all"
                     placeholder="John Smith"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Email</label>
+                  <label htmlFor="email" className="block text-sm text-muted-foreground mb-2">Email</label>
                   <input
+                    id="email"
                     type="email"
                     required
                     value={formState.email}
                     onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                    className="w-full bg-background/50 border border-border focus:border-primary outline-none py-3 px-4 rounded-xl text-foreground transition-all"
+                    className="w-full bg-background/50 border border-border focus:border-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 py-3 px-4 rounded-xl text-foreground transition-all"
                     placeholder="john@company.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Company (optional)</label>
+                <label htmlFor="company" className="block text-sm text-muted-foreground mb-2">Company (optional)</label>
                 <input
+                  id="company"
                   type="text"
                   value={formState.company}
                   onChange={(e) => setFormState({ ...formState, company: e.target.value })}
-                  className="w-full bg-background/50 border border-border focus:border-primary outline-none py-3 px-4 rounded-xl text-foreground transition-all"
+                  className="w-full bg-background/50 border border-border focus:border-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 py-3 px-4 rounded-xl text-foreground transition-all"
                   placeholder="Acme Inc."
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">
+                <label htmlFor="message" className="block text-sm text-muted-foreground mb-2">
                   What&apos;s the most annoying repetitive task in your business?
                 </label>
                 <textarea
+                  id="message"
                   required
                   value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                   rows={4}
-                  className="w-full bg-background/50 border border-border focus:border-primary outline-none py-3 px-4 rounded-xl text-foreground transition-all resize-none"
+                  className="w-full bg-background/50 border border-border focus:border-primary outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 py-3 px-4 rounded-xl text-foreground transition-all resize-none"
                   placeholder="I spend 3 hours every day copying data between spreadsheets and our CRM..."
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-primary/25 transition-all group"
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-3 py-4 bg-primary text-primary-foreground rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-primary/25 transition-all group focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <span>Request a Call</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    Sending...
+                  </span>
+                ) : (
+                  <>
+                    <span>Request a Call</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
               </button>
 
               <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground pt-2">
