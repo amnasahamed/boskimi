@@ -116,15 +116,22 @@ export function CosmicDust() {
             }
         };
 
+        let resizeTimeoutId: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeoutId);
+            resizeTimeoutId = setTimeout(resizeCanvas, 200);
+        };
+
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
+            clearTimeout(resizeTimeoutId);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
