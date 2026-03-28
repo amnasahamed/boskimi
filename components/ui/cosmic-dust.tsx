@@ -116,15 +116,27 @@ export function CosmicDust() {
             }
         };
 
+        // ⚡ Bolt Optimization: Debounce window resize events
+        // 🎯 Why: Re-initializing the particles array on every resize tick causes unnecessary garbage collection and CPU spikes
+        // 📊 Impact: Prevents main thread blocking and reduces memory churn during window resizing
+        let resizeTimeout: NodeJS.Timeout;
+        const debouncedResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+            }, 200);
+        };
+
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", debouncedResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", debouncedResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
