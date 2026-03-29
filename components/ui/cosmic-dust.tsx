@@ -17,13 +17,20 @@ export function CosmicDust() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        // Check if mobile
+        // Performance: Debounce mobile check on resize to reduce layout thrashing
+        let timeoutId: ReturnType<typeof setTimeout>;
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                setIsMobile(window.innerWidth < 768);
+            }, 200);
         };
-        checkMobile();
+        setIsMobile(window.innerWidth < 768); // Initial setup without debounce
         window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        return () => {
+            window.removeEventListener('resize', checkMobile);
+            clearTimeout(timeoutId);
+        };
     }, []);
 
     useEffect(() => {
@@ -44,10 +51,16 @@ export function CosmicDust() {
         const targetFPS = isMobile ? 20 : 60;
         const frameInterval = 1000 / targetFPS;
 
+        // Performance: Debounce canvas resize to prevent excessive particle recreation
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+
         const resizeCanvas = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
+            }, 200);
         };
 
         const initParticles = () => {
@@ -119,12 +132,17 @@ export function CosmicDust() {
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("resize", resizeCanvas);
 
-        resizeCanvas();
+        // Initial setup without debounce
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initParticles();
+
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
