@@ -295,7 +295,7 @@ export default function AboutPage() {
                           <p className="text-primary font-medium">{founder.role}</p>
                         </div>
                         <Button variant="ghost" size="icon" className="rounded-full" asChild>
-                          <Link href={founder.linkedin} target="_blank">
+                          <Link href={founder.linkedin} target="_blank" aria-label={`Visit ${founder.name}'s LinkedIn profile`}>
                             <Linkedin className="w-4 h-4" />
                           </Link>
                         </Button>
