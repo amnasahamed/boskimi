@@ -44,7 +44,19 @@ export function CosmicDust() {
         const targetFPS = isMobile ? 20 : 60;
         const frameInterval = 1000 / targetFPS;
 
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+
+        // Debounce window resize to prevent CPU spikes and excessive re-initialization
         const resizeCanvas = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
+            }, 200);
+        };
+
+        const initialResizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
@@ -119,12 +131,13 @@ export function CosmicDust() {
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("resize", resizeCanvas);
 
-        resizeCanvas();
+        initialResizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);

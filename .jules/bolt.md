@@ -1,0 +1,3 @@
+## 2024-05-18 - [Canvas Resize Optimization]
+**Learning:** Debouncing `window.resize` on components that manipulate `<canvas>` and large arrays (like particles) prevents severe main thread blocks. However, debouncing the *only* initialize function means the first load of the canvas has a delay.
+**Action:** When debouncing initialization functions on `window.resize` (like `resizeCanvas`), ensure a separate, immediate, un-debounced initialization call is executed on component mount to prevent initial rendering delays or blank canvases on load.
