@@ -18,12 +18,20 @@ export function CosmicDust() {
 
     useEffect(() => {
         // Check if mobile
+        let resizeTimeout: NodeJS.Timeout;
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
         };
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(checkMobile, 200);
+        };
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+        };
     }, []);
 
     useEffect(() => {
@@ -35,6 +43,7 @@ export function CosmicDust() {
 
         let animationFrameId: number;
         let particles: Particle[] = [];
+        let resizeTimeout: NodeJS.Timeout;
         const colors = ["#a8eb12", "#00F0FF", "#ffffff"]; // Neon Lime, Cyan, White
 
         // Reduce particles on mobile for better performance
@@ -48,6 +57,11 @@ export function CosmicDust() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
+        };
+
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
         };
 
         const initParticles = () => {
@@ -117,15 +131,16 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
+            clearTimeout(resizeTimeout);
         };
     }, [isMobile]);
 

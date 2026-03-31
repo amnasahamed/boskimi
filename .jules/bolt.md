@@ -1,0 +1,3 @@
+## 2024-03-31 - [Canvas Background Resize Optimization]
+**Learning:** Found that `<canvas>` background animations like `StarfieldBackground` and `CosmicDust` lacked debouncing on `window.resize` event listeners. This can cause excessive array re-initializations and CPU spikes during browser resize. Also, when debouncing `window.resize` logic (like `resizeCanvas`), an immediate, un-debounced initialization call is required on component mount to prevent initial rendering delays or blank canvases on load.
+**Action:** Always wrap `window.resize` handlers that rebuild expensive arrays in a debounce function (e.g., using a 200ms `setTimeout`). Ensure initial `resizeCanvas()` is called independently of the debounced handler.
