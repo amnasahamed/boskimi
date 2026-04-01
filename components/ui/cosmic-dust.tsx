@@ -17,13 +17,28 @@ export function CosmicDust() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+
         // Check if mobile
+        // ⚡ Bolt: Resize mobile detection debouncing
+        // Why: Window resizing fires frequently, causing unnecessary state updates (`setIsMobile`) and subsequent re-renders.
+        // What: We debounce the mobile viewport check by 200ms to reduce unneeded evaluations when resizing.
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
         };
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+
+        const debouncedCheckMobile = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(checkMobile, 200);
+        };
+
+        checkMobile(); // Immediate initial call
+        window.addEventListener('resize', debouncedCheckMobile);
+
+        return () => {
+            window.removeEventListener('resize', debouncedCheckMobile);
+            clearTimeout(resizeTimeout);
+        };
     }, []);
 
     useEffect(() => {
@@ -44,10 +59,21 @@ export function CosmicDust() {
         const targetFPS = isMobile ? 20 : 60;
         const frameInterval = 1000 / targetFPS;
 
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+
+        // ⚡ Bolt: Canvas resize debouncing
+        // Why: Continuously recalculating window boundaries and re-allocating the entire
+        // particles array during an active window resize drops frames significantly.
+        // What: We debounce canvas redrawing and particle initialization by 200ms.
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
+        };
+
+        const debouncedResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
         };
 
         const initParticles = () => {
@@ -117,14 +143,15 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", debouncedResize);
 
-        resizeCanvas();
+        resizeCanvas(); // Immediate initial call
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", debouncedResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);

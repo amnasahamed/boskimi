@@ -23,10 +23,22 @@ export function StarfieldBackground() {
         let animationFrameId: number;
         let stars: Star[] = [];
 
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+
+        // ⚡ Bolt: Resize debouncing logic
+        // Why: Window resizing fires dozens of events per second. Redrawing the canvas and
+        // reinitializing all star positions on every single event causes heavy CPU spikes and jank.
+        // What: We debounce the resize event by 200ms so the expensive canvas layout and star
+        // array initialization only run once the user has finished resizing the window.
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initStars();
+        };
+
+        const debouncedResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
         };
 
         const initStars = () => {
@@ -69,13 +81,14 @@ export function StarfieldBackground() {
             animationFrameId = requestAnimationFrame(drawStars);
         };
 
-        resizeCanvas();
+        resizeCanvas(); // Immediate initial call
         drawStars();
 
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", debouncedResize);
 
         return () => {
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", debouncedResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
