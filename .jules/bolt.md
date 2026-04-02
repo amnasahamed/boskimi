@@ -1,0 +1,3 @@
+## 2024-11-20 - Debounce Canvas Animations on Resize
+**Learning:** Animated `<canvas>` backgrounds that recreate entire arrays of entities (like stars or dust particles) on every `window.resize` event trigger massive CPU spikes due to layout thrashing and aggressive garbage collection.
+**Action:** Always add a short debounce (e.g., 200ms) to `resize` event listeners for full-screen canvas components, while preserving an immediate, un-debounced execution on initial mount.

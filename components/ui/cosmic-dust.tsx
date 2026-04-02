@@ -22,8 +22,22 @@ export function CosmicDust() {
             setIsMobile(window.innerWidth < 768);
         };
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+
+        // ⚡ Bolt Performance Optimization:
+        // Debounce resize events by 200ms to prevent unnecessary React state updates
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                checkMobile();
+            }, 200);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            clearTimeout(resizeTimeout);
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     useEffect(() => {
@@ -117,14 +131,27 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+
+        // ⚡ Bolt Performance Optimization:
+        // Debounce resize events by 200ms to prevent massive CPU spikes from
+        // array destruction and recreation during window dragging/resizing.
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+            }, 200);
+        };
+
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeout);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
