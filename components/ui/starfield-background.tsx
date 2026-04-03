@@ -69,13 +69,23 @@ export function StarfieldBackground() {
             animationFrameId = requestAnimationFrame(drawStars);
         };
 
+        // ⚡ Bolt Performance Optimization:
+        // Debounce window resize events by 200ms to prevent excessive canvas re-initializations
+        // and CPU spikes during continuous window dragging.
+        let resizeTimeout: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
+        };
+
         resizeCanvas();
         drawStars();
 
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         return () => {
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
