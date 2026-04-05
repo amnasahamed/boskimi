@@ -1,0 +1,3 @@
+## 2026-04-05 - Debouncing canvas initialization on window resize
+**Learning:** In React components managing canvas animations (like `CosmicDust` or `StarfieldBackground`), binding array/state initialization directly to `window.addEventListener('resize')` can cause excessive re-initializations, CPU spikes, and garbage collection overhead during smooth resizing.
+**Action:** Always wrap canvas resizing and expensive re-initialization logic in a debounced `setTimeout` (e.g., 200ms) on `window.resize` events. Ensure an initial setup call is still made immediately on component mount to avoid a blank initial render.
