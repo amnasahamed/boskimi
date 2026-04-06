@@ -1,0 +1,3 @@
+## 2025-05-18 - [Form Accessibility in landing components]
+**Learning:** Found that custom landing page components (e.g., `ConnectionPortal`) in this specific app often use custom HTML forms instead of the standard Shadcn UI `<Form>` component. These custom forms tend to lack basic accessibility associations between `<label>` and `<input>`/`<textarea>` elements.
+**Action:** When reviewing or creating new landing page sections that collect user input, actively verify that explicit `htmlFor` and `id` pairings are present, as they cannot be assumed to be handled by a form library in these specific components.
