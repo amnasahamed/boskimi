@@ -29,6 +29,14 @@ export function StarfieldBackground() {
             initStars();
         };
 
+        let resizeTimeoutId: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeoutId);
+            // ⚡ Bolt: Debounce resize event to prevent performance spikes and excessive array re-initialization
+            // Impact: Reduces CPU usage by limiting canvas recalculations during active window resizing.
+            resizeTimeoutId = setTimeout(resizeCanvas, 200);
+        };
+
         const initStars = () => {
             const starCount = Math.floor((canvas.width * canvas.height) / 3000);
             stars = [];
@@ -72,10 +80,11 @@ export function StarfieldBackground() {
         resizeCanvas();
         drawStars();
 
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         return () => {
-            window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeoutId);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
