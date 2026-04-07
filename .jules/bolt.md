@@ -1,0 +1,3 @@
+## 2025-02-14 - Canvas Background Window Resize Bottleneck
+**Learning:** In canvas-based background animations (like StarfieldBackground and CosmicDust), binding `window.addEventListener("resize", ...)` directly to synchronous array re-allocations (e.g., recreating thousands of particle objects on every pixel change of window resizing) causes severe, unexpected CPU spikes that can freeze the application rendering.
+**Action:** Always wrap window resize event listeners that manipulate large arrays or perform expensive calculations in a debounce function (e.g., ~200ms) to ensure the heavy array reallocation only occurs after the user has finished resizing the window.
