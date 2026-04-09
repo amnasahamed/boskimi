@@ -18,12 +18,22 @@ export function CosmicDust() {
 
     useEffect(() => {
         // Check if mobile
+        let resizeTimeout: NodeJS.Timeout;
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
         };
+
+        const debouncedCheckMobile = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(checkMobile, 200);
+        };
+
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        window.addEventListener('resize', debouncedCheckMobile);
+        return () => {
+            window.removeEventListener('resize', debouncedCheckMobile);
+            clearTimeout(resizeTimeout);
+        };
     }, []);
 
     useEffect(() => {
@@ -110,6 +120,12 @@ export function CosmicDust() {
             });
         };
 
+        let resizeTimeout: NodeJS.Timeout;
+        const debouncedResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
+        };
+
         const handleMouseMove = (e: MouseEvent) => {
             if (!isMobile) {
                 mouseRef.current = { x: e.clientX, y: e.clientY };
@@ -117,14 +133,16 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", debouncedResize);
 
+        // Initial setup
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", debouncedResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
