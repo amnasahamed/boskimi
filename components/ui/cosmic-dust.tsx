@@ -22,8 +22,17 @@ export function CosmicDust() {
             setIsMobile(window.innerWidth < 768);
         };
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        let resizeTimeout: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            // ⚡ Bolt Performance Optimization: Debounce window resize listener
+            resizeTimeout = setTimeout(checkMobile, 200);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            clearTimeout(resizeTimeout);
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     useEffect(() => {
@@ -116,15 +125,23 @@ export function CosmicDust() {
             }
         };
 
+        let resizeTimeout: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            // ⚡ Bolt Performance Optimization: Debounce canvas resize to prevent array re-initialization CPU spikes
+            resizeTimeout = setTimeout(resizeCanvas, 200);
+        };
+
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
+            clearTimeout(resizeTimeout);
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
