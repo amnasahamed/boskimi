@@ -22,8 +22,17 @@ export function CosmicDust() {
             setIsMobile(window.innerWidth < 768);
         };
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+
+        let resizeTimeout: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(checkMobile, 200);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+        };
     }, []);
 
     useEffect(() => {
@@ -48,6 +57,12 @@ export function CosmicDust() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
+        };
+
+        let resizeTimeout: NodeJS.Timeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
         };
 
         const initParticles = () => {
@@ -117,14 +132,15 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
