@@ -1,0 +1,3 @@
+## $(date +%Y-%m-%d) - Expensive Un-debounced Canvas Resize Events
+**Learning:** In React components with background `<canvas>` animations (like `StarfieldBackground` and `CosmicDust`), binding array re-initialization and full-canvas redraws directly to `window.addEventListener('resize')` without debouncing can trigger heavy CPU spikes since the event fires continuously (up to 60fps) during window adjustment.
+**Action:** Always wrap expensive initialization functions in a debounce timeout (e.g., `setTimeout(fn, 200)`) when handling resize events for canvas animations to ensure the layout operations only execute once the user interaction completes.

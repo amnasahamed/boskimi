@@ -72,10 +72,23 @@ export function StarfieldBackground() {
         resizeCanvas();
         drawStars();
 
-        window.addEventListener("resize", resizeCanvas);
+        // ⚡ Bolt Performance Optimization:
+        // Why: The 'resize' event fires at a high rate (up to 60fps). Redrawing the entire canvas and
+        // recalculating particles on every single frame causes significant CPU spikes.
+        // What: Debouncing the resize handler ensures `resizeCanvas` is only called once the user finishes
+        // resizing the window (after 200ms of inactivity).
+        // Expected Impact: Reduces continuous layout thrashing and high CPU usage during window resizes.
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 200);
+        };
+
+        window.addEventListener("resize", handleResize);
 
         return () => {
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
