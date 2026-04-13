@@ -69,13 +69,28 @@ export function StarfieldBackground() {
             animationFrameId = requestAnimationFrame(drawStars);
         };
 
+        // Debounce resize to prevent CPU spikes from excessive re-initialization
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+            // Update canvas dimensions immediately to prevent visual stretching
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            clearTimeout(resizeTimeout);
+            // Defer expensive star array re-creation until resize ends
+            resizeTimeout = setTimeout(() => {
+                initStars();
+            }, 200);
+        };
+
         resizeCanvas();
         drawStars();
 
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         return () => {
-            window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeout);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);

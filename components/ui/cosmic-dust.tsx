@@ -116,15 +116,30 @@ export function CosmicDust() {
             }
         };
 
+        // Debounce resize to prevent CPU spikes from excessive re-initialization
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+            // Update canvas dimensions immediately to prevent visual stretching
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            clearTimeout(resizeTimeout);
+            // Defer expensive particle array re-creation until resize ends
+            resizeTimeout = setTimeout(() => {
+                initParticles();
+            }, 200);
+        };
+
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
+            clearTimeout(resizeTimeout);
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
