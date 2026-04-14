@@ -22,11 +22,17 @@ export function StarfieldBackground() {
 
         let animationFrameId: number;
         let stars: Star[] = [];
+        let resizeTimeout: NodeJS.Timeout;
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initStars();
+
+            // Debounce expensive array initialization to prevent lag during resize
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                initStars();
+            }, 150);
         };
 
         const initStars = () => {
@@ -69,7 +75,10 @@ export function StarfieldBackground() {
             animationFrameId = requestAnimationFrame(drawStars);
         };
 
-        resizeCanvas();
+        // Initial setup without debounce
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initStars();
         drawStars();
 
         window.addEventListener("resize", resizeCanvas);
@@ -77,6 +86,7 @@ export function StarfieldBackground() {
         return () => {
             window.removeEventListener("resize", resizeCanvas);
             cancelAnimationFrame(animationFrameId);
+            clearTimeout(resizeTimeout);
         };
     }, []);
 

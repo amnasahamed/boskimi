@@ -35,6 +35,7 @@ export function CosmicDust() {
 
         let animationFrameId: number;
         let particles: Particle[] = [];
+        let resizeTimeout: NodeJS.Timeout;
         const colors = ["#a8eb12", "#00F0FF", "#ffffff"]; // Neon Lime, Cyan, White
 
         // Reduce particles on mobile for better performance
@@ -47,7 +48,12 @@ export function CosmicDust() {
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initParticles();
+
+            // Debounce expensive array initialization to prevent lag during resize
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                initParticles();
+            }, 150);
         };
 
         const initParticles = () => {
@@ -119,13 +125,17 @@ export function CosmicDust() {
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("resize", resizeCanvas);
 
-        resizeCanvas();
+        // Initial setup without debounce
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initParticles();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", resizeCanvas);
             cancelAnimationFrame(animationFrameId);
+            clearTimeout(resizeTimeout);
         };
     }, [isMobile]);
 
