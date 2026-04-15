@@ -86,6 +86,8 @@ export function FAQSection() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-content-${index}`}
                 className="w-full flex items-center justify-between p-5 text-left hover:bg-card/50 transition-colors"
               >
                 <span className="font-serif text-lg text-foreground pr-4">{faq.question}</span>
@@ -93,12 +95,14 @@ export function FAQSection() {
                   className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform ${
                     openIndex === index ? "rotate-180" : ""
                   }`} 
+                  aria-hidden="true"
                 />
               </button>
               
               <AnimatePresence>
                 {openIndex === index && (
                   <motion.div
+                    id={`faq-content-${index}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
