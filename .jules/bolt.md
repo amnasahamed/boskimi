@@ -1,0 +1,3 @@
+## 2024-04-15 - [Canvas Resize Optimization]
+**Learning:** When optimizing `<canvas>` background animations on window resize, updating `canvas.width` and `canvas.height` must happen immediately to prevent visual distortion (stretching/squashing), but the computationally expensive array re-initialization (e.g., `initStars()` or `initParticles()`) should be debounced.
+**Action:** In future `<canvas>` performance tasks, split dimensional updates (immediate) from particle/state re-initialization (debounced) and ensure an immediate un-debounced initialization is executed on component mount to prevent initial rendering delays.
