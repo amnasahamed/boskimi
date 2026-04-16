@@ -1,0 +1,3 @@
+## 2024-03-24 - [Accessible Custom Accordions]
+**Learning:** When implementing custom animated accordions (e.g., using framer-motion) that don't rely on existing Radix/Shadcn primitives, it's critical to manually wire up the `aria-expanded` and `aria-controls` relationship on the trigger button, and the corresponding `id`, `role="region"`, and `aria-labelledby` on the content container. Otherwise, screen readers won't announce the state changes or associate the content with the button.
+**Action:** Always verify that custom expandable UI components have proper ARIA linkages, and include `focus-visible` styles for the trigger buttons.
