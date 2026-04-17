@@ -44,10 +44,18 @@ export function CosmicDust() {
         const targetFPS = isMobile ? 20 : 60;
         const frameInterval = 1000 / targetFPS;
 
+        let resizeTimeoutId: NodeJS.Timeout;
+
         const resizeCanvas = () => {
+            // Immediately update canvas dimensions to prevent distortion
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initParticles();
+
+            // Debounce expensive particle re-initialization
+            clearTimeout(resizeTimeoutId);
+            resizeTimeoutId = setTimeout(() => {
+                initParticles();
+            }, 150);
         };
 
         const initParticles = () => {
@@ -119,12 +127,16 @@ export function CosmicDust() {
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("resize", resizeCanvas);
 
-        resizeCanvas();
+        // Immediate initialization on mount
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initParticles();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeoutId);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
