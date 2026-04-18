@@ -1,0 +1,3 @@
+## 2024-06-25 - Form Labels and Icon Buttons A11y
+**Learning:** Found multiple instances where `<label>` tags lacked `htmlFor` and `<input>`/`<textarea>` tags lacked `id` attributes, preventing proper form association. Additionally, some circular or visually decorative action buttons (e.g., in a mock chat interface like `whatsapp-pulse.tsx`) lacked `aria-label`s, rendering them invisible or confusing to screen readers.
+**Action:** When building custom forms or mock interactive components, always ensure explicit `htmlFor`/`id` linking for inputs and provide descriptive `aria-label`s for any button where the content is purely visual (e.g., SVG icons).
