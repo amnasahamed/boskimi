@@ -43,11 +43,17 @@ export function CosmicDust() {
         let lastTime = 0;
         const targetFPS = isMobile ? 20 : 60;
         const frameInterval = 1000 / targetFPS;
+        let resizeTimeoutId: ReturnType<typeof setTimeout>;
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initParticles();
+
+            // Debounce the expensive array re-initialization
+            clearTimeout(resizeTimeoutId);
+            resizeTimeoutId = setTimeout(() => {
+                initParticles();
+            }, 200);
         };
 
         const initParticles = () => {
@@ -119,12 +125,16 @@ export function CosmicDust() {
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("resize", resizeCanvas);
 
-        resizeCanvas();
+        // Initial setup without debounce to prevent blank canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initParticles();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("resize", resizeCanvas);
+            clearTimeout(resizeTimeoutId);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
