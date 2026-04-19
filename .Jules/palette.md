@@ -1,0 +1,3 @@
+## 2026-04-19 - Explicit Form Label Association in Custom Components
+**Learning:** Custom landing page forms that bypass standard UI components (like Radix UI's `Label` and custom `Input`/`Textarea`) often miss explicit form associations (`htmlFor` and `id`), breaking accessibility. Relying solely on visual proximity is insufficient for screen readers.
+**Action:** When building custom forms without design system wrappers, always manually wire up `<label htmlFor="xyz">` and `<input id="xyz">`. Never assume a standalone `<label>` element without `htmlFor` is sufficient, even if placed directly adjacent to the input.
