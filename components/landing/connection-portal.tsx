@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react"
-import { useRef, useState } from "react";
+import { useRef, useState, useId } from "react";
 import { motion, useInView } from "framer-motion";
 import { Calendar, Clock, CheckCircle, ArrowRight, Mail, MapPin } from "lucide-react";
 
 export function ConnectionPortal() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const formId = useId();
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
   const [formState, setFormState] = useState({
     name: "",
@@ -85,8 +86,9 @@ export function ConnectionPortal() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Your Name</label>
+                  <label htmlFor={`${formId}-name`} className="block text-sm text-muted-foreground mb-2">Your Name</label>
                   <input
+                    id={`${formId}-name`}
                     type="text"
                     required
                     value={formState.name}
@@ -96,8 +98,9 @@ export function ConnectionPortal() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Email</label>
+                  <label htmlFor={`${formId}-email`} className="block text-sm text-muted-foreground mb-2">Email</label>
                   <input
+                    id={`${formId}-email`}
                     type="email"
                     required
                     value={formState.email}
@@ -109,8 +112,9 @@ export function ConnectionPortal() {
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Company (optional)</label>
+                <label htmlFor={`${formId}-company`} className="block text-sm text-muted-foreground mb-2">Company (optional)</label>
                 <input
+                  id={`${formId}-company`}
                   type="text"
                   value={formState.company}
                   onChange={(e) => setFormState({ ...formState, company: e.target.value })}
@@ -120,10 +124,11 @@ export function ConnectionPortal() {
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">
+                <label htmlFor={`${formId}-message`} className="block text-sm text-muted-foreground mb-2">
                   What&apos;s the most annoying repetitive task in your business?
                 </label>
                 <textarea
+                  id={`${formId}-message`}
                   required
                   value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
