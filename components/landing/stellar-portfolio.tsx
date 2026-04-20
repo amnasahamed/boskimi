@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ExternalLink, Search } from "lucide-react";
@@ -136,14 +136,17 @@ export function StellarPortfolio() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredWebsites = websites.filter((website) => {
-    const matchesCategory =
-      selectedCategory === "All" || website.category === selectedCategory;
-    const matchesSearch = (website.title || website.url)
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredWebsites = useMemo(() => {
+    const lowerSearchQuery = searchQuery.toLowerCase();
+    return websites.filter((website) => {
+      const matchesCategory =
+        selectedCategory === "All" || website.category === selectedCategory;
+      const matchesSearch = (website.title || website.url)
+        .toLowerCase()
+        .includes(lowerSearchQuery);
+      return matchesCategory && matchesSearch;
+    });
+  }, [searchQuery, selectedCategory]);
 
   return (
     <section className="relative py-24 px-6 overflow-hidden">
