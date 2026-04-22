@@ -85,8 +85,11 @@ export function FAQSection() {
               className="border border-border/50 rounded-2xl bg-card/30 backdrop-blur-sm overflow-hidden"
             >
               <button
+                id={`faq-trigger-${index}`}
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-content-${index}`}
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-5 text-left hover:bg-card/50 transition-colors"
+                className="w-full flex items-center justify-between p-5 text-left hover:bg-card/50 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               >
                 <span className="font-serif text-lg text-foreground pr-4">{faq.question}</span>
                 <ChevronDown 
@@ -99,6 +102,9 @@ export function FAQSection() {
               <AnimatePresence>
                 {openIndex === index && (
                   <motion.div
+                    id={`faq-content-${index}`}
+                    role="region"
+                    aria-labelledby={`faq-trigger-${index}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
