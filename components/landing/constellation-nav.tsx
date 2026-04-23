@@ -129,6 +129,8 @@ export function ConstellationNav() {
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden relative w-12 h-12 flex items-center justify-center z-50"
               aria-label="Toggle menu"
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               <div className="relative w-6 h-4">
                 <motion.span
@@ -161,6 +163,7 @@ export function ConstellationNav() {
       {/* Mobile Menu - Full Screen */}
       {isOpen && (
         <div 
+          id="mobile-menu"
           className="fixed inset-0 z-40 lg:hidden"
           style={{ 
             backgroundColor: 'white',
