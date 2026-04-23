@@ -50,6 +50,19 @@ export function CosmicDust() {
             initParticles();
         };
 
+        let resizeTimeout: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+            // Update immediately to prevent stretching/squashing
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Debounce the expensive array re-initialization
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                initParticles();
+            }, 250);
+        };
+
         const initParticles = () => {
             particles = [];
             for (let i = 0; i < particleCount; i++) {
@@ -117,14 +130,16 @@ export function CosmicDust() {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("resize", handleResize);
 
+        // Immediate initialization on mount
         resizeCanvas();
         animationFrameId = requestAnimationFrame(animate);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener("resize", handleResize);
+            clearTimeout(resizeTimeout);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);
