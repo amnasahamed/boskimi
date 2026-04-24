@@ -85,11 +85,15 @@ export function FAQSection() {
               className="border border-border/50 rounded-2xl bg-card/30 backdrop-blur-sm overflow-hidden"
             >
               <button
+                id={`faq-question-${index}`}
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-answer-${index}`}
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-5 text-left hover:bg-card/50 transition-colors"
+                className="w-full flex items-center justify-between p-5 text-left hover:bg-card/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
               >
                 <span className="font-serif text-lg text-foreground pr-4">{faq.question}</span>
                 <ChevronDown 
+                  aria-hidden="true"
                   className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform ${
                     openIndex === index ? "rotate-180" : ""
                   }`} 
@@ -99,6 +103,9 @@ export function FAQSection() {
               <AnimatePresence>
                 {openIndex === index && (
                   <motion.div
+                    id={`faq-answer-${index}`}
+                    role="region"
+                    aria-labelledby={`faq-question-${index}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
