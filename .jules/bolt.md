@@ -1,0 +1,3 @@
+## 2025-04-25 - Debouncing Canvas Initialization
+**Learning:** When debouncing canvas re-initialization (like `initStars`) on `window.resize` to reduce computationally expensive loops, it is critical to update `canvas.width` and `canvas.height` *immediately* in the resize handler. Failing to do so results in the canvas visually stretching and squashing before the debounce resolves. Additionally, `initStars` must be explicitly called once on component mount outside of the resize listener, otherwise the canvas remains blank until the first user resize event.
+**Action:** When optimizing canvas resize handlers, separate the dimension updates (immediate) from the data/particle regeneration (debounced), and ensure an initial setup call is made on mount.
