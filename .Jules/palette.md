@@ -1,0 +1,3 @@
+## 2024-11-20 - SSR Safe Form Input IDs in Custom Components
+**Learning:** This Next.js app contains custom form components (like ConnectionPortal) built without standard UI libraries that lack explicit `id` bindings between `<label>` and inputs, negatively impacting screen reader usability and label click-focusing. Hardcoding IDs poses a risk for hydration mismatches or component reuse.
+**Action:** Always use React's `useId()` hook to generate unique prefixes and explicitly bind `htmlFor` to `id` for custom form implementations inside this project, ensuring both accessibility and SSR compatibility.
