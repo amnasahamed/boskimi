@@ -1,0 +1,3 @@
+## 2024-04-26 - O(N^2) Canvas Network Optimizations
+**Learning:** In the `ConstellationNetwork` component, drawing linear gradients inside the O(N^2) loop that iterates over node pairs causes a massive performance bottleneck on every animation frame. Computing `Math.sqrt` on every pair is similarly expensive.
+**Action:** When implementing connected particle networks on `<canvas>`, always replace dynamic object creation (like gradients) with global styling (`ctx.strokeStyle` combined with `ctx.globalAlpha`). Cache squared distances (`distSq < maxDistanceSq`) to defer computing `Math.sqrt` until you've verified nodes are within rendering range.

@@ -74,13 +74,19 @@ export function ConstellationNetwork({ className = "" }: { className?: string })
 
             // Draw connections
             const maxDistance = 120;
+
+            // Optimization: Cache squared distance to avoid Math.sqrt in the inner loop
+            const maxDistanceSq = maxDistance * maxDistance;
+
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const dx = nodes[i].x - nodes[j].x;
                     const dy = nodes[i].y - nodes[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const distSq = dx * dx + dy * dy;
 
-                    if (distance < maxDistance) {
+                    // Only calculate exact distance (Math.sqrt) if nodes are within connection range
+                    if (distSq < maxDistanceSq) {
+                        const distance = Math.sqrt(distSq);
                         const opacity = (1 - distance / maxDistance) * 0.5;
                         const gradient = ctx.createLinearGradient(
                             nodes[i].x, nodes[i].y,
