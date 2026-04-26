@@ -85,8 +85,9 @@ export function ConnectionPortal() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Your Name</label>
+                  <label htmlFor="name" className="block text-sm text-muted-foreground mb-2">Your Name</label>
                   <input
+                    id="name"
                     type="text"
                     required
                     value={formState.name}
@@ -96,8 +97,9 @@ export function ConnectionPortal() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Email</label>
+                  <label htmlFor="email" className="block text-sm text-muted-foreground mb-2">Email</label>
                   <input
+                    id="email"
                     type="email"
                     required
                     value={formState.email}
@@ -109,8 +111,9 @@ export function ConnectionPortal() {
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Company (optional)</label>
+                <label htmlFor="company" className="block text-sm text-muted-foreground mb-2">Company (optional)</label>
                 <input
+                  id="company"
                   type="text"
                   value={formState.company}
                   onChange={(e) => setFormState({ ...formState, company: e.target.value })}
@@ -120,10 +123,11 @@ export function ConnectionPortal() {
               </div>
 
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">
+                <label htmlFor="message" className="block text-sm text-muted-foreground mb-2">
                   What&apos;s the most annoying repetitive task in your business?
                 </label>
                 <textarea
+                  id="message"
                   required
                   value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
