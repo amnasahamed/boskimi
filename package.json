@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "generate:meta": "python3 scripts/generate-meta-images.py",
     "lint": "eslint .",
     "start": "next start"
   },

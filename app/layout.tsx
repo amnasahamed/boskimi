@@ -4,6 +4,8 @@ import { Inter, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Providers } from "@/components/providers"
 import { CustomCursor } from "@/components/ui/custom-cursor"
+import { createMetadata } from "@/lib/metadata"
+import { siteConfig } from "@/lib/site"
 import './globals.css'
 
 // Body font - Highly readable, modern sans-serif
@@ -40,25 +42,31 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Base of Stars | AI Solutions for Business Growth',
-  description: 'We use AI to solve real business problems. From intelligent automation to custom AI agents, we help businesses work smarter, scale faster, and delight customers.',
-  generator: 'v0.app',
+  ...createMetadata({
+    title: `${siteConfig.name} | ${siteConfig.tagline}`,
+    description: siteConfig.description,
+    path: "/",
+    image: "og-default.png",
+  }),
+  generator: "Next.js",
+  applicationName: siteConfig.name,
+  keywords: [
+    "AI solutions",
+    "AI agents",
+    "workflow automation",
+    "WhatsApp automation",
+    "business automation",
+    "Base of Stars",
+  ],
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: '/apple-icon.png',
+    apple: "/apple-icon.png",
   },
 }
 
