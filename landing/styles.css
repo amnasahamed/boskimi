@@ -307,12 +307,16 @@ button {
 .headline .l2 { animation-delay: 0.3s; }
 
 .subhead {
-  max-width: min(500px, 92%);
+  max-width: min(560px, 92%);
   margin: clamp(14px, 2.2vh, 22px) 0 0;
   font-size: clamp(calc(13.5px + 2pt), calc(1.55vw + 2pt), calc(16.5px + 2pt));
   line-height: 1.55;
   font-weight: 400;
   color: #d0d0d0;
+}
+
+.sub-short {
+  display: none;
 }
 
 .cta {
@@ -618,6 +622,14 @@ button {
     letter-spacing: -0.08em;
     line-height: 1.05;
     font-size: clamp(28px, 9vw, 56px);
+  }
+
+  .sub-short {
+    display: inline;
+  }
+
+  .sub-long {
+    display: none;
   }
 
   .stats {
