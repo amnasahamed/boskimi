@@ -31,7 +31,7 @@ const faqs = [
   },
   {
     question: "Who are you guys, anyway?",
-    answer: "We're a small team of engineers who got tired of seeing businesses waste time on work computers should do. We've shipped 147 projects for companies ranging from startups to government agencies. We're based in India but work with clients worldwide.",
+    answer: "We're a small team of engineers who got tired of seeing businesses waste time on work computers should do. We've delivered 118 websites and projects for 100+ businesses across 8 countries, from startups to government agencies. We're based in India but work with clients worldwide.",
   },
 ];
 

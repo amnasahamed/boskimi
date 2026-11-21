@@ -42,8 +42,8 @@ const values = [
 ];
 
 const stats = [
-  { value: "147+", label: "Projects Delivered", suffix: "" },
-  { value: "50", label: "Happy Clients", suffix: "+" },
+  { value: "118", label: "Websites Delivered", suffix: "" },
+  { value: "100", label: "Businesses Served", suffix: "+" },
   { value: "4", label: "Core Team", suffix: "" },
   { value: "30", label: "Day Avg Delivery", suffix: "" }
 ];

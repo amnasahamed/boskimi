@@ -70,7 +70,7 @@ const services = [
     features: ["Tech Audits", "Architecture", "Strategy"],
     color: "#FFD700",
     metrics: [
-      { value: "50+", label: "Clients" },
+      { value: "100+", label: "Clients" },
       { value: "340%", label: "Avg ROI" },
     ]
   },

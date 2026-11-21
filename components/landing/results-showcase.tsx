@@ -184,10 +184,10 @@ export function ResultsShowcase() {
           className="mt-20 pt-12 border-t border-border/30 grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
         >
           {[
-            { value: "147", label: "Projects Shipped" },
-            { value: "$2.4M", label: "Client Revenue Added" },
-            { value: "40K+", label: "Hours Saved" },
-            { value: "98%", label: "Client Satisfaction" },
+            { value: "118", label: "Websites Delivered" },
+            { value: "100+", label: "Businesses Served" },
+            { value: "8", label: "Countries Served" },
+            { value: "28", label: "Industries" },
           ].map((stat, i) => (
             <div key={i}>
               <div className="font-serif text-4xl text-foreground">{stat.value}</div>

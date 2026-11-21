@@ -70,9 +70,9 @@ export function CosmicTransition() {
         {/* Stats in constellation style */}
         <div className="flex flex-wrap justify-center gap-8 md:gap-16">
           {[
-            { value: "147", label: "Systems Shipped" },
-            { value: "50+", label: "Businesses Orbiting" },
-            { value: "30", label: "Day Average" },
+            { value: "118", label: "Websites Delivered" },
+            { value: "100+", label: "Businesses Served" },
+            { value: "8", label: "Countries" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}

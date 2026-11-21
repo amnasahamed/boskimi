@@ -152,10 +152,10 @@ export function TestimonialsCarousel() {
           className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
         >
           {[
-            { icon: Building2, value: "50+", label: "Companies Helped" },
-            { icon: TrendingUp, value: "340%", label: "Average ROI" },
-            { icon: Clock, value: "30", label: "Day Implementation" },
-            { icon: Award, value: "99%", label: "Client Retention" },
+            { icon: Building2, value: "100+", label: "Businesses Served" },
+            { icon: TrendingUp, value: "118", label: "Websites Delivered" },
+            { icon: Award, value: "8", label: "Countries Served" },
+            { icon: Clock, value: "24/7", label: "WhatsApp Automation" },
           ].map((stat, i) => (
             <div key={i} className="text-center">
               <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
