@@ -454,3 +454,75 @@
     color: black !important;
   }
 }
+
+/* ---------- Systems core diagram ---------- */
+@keyframes sc-dash {
+  from { stroke-dashoffset: 426; }
+  to { stroke-dashoffset: 0; }
+}
+.sc-dash {
+  stroke-dashoffset: 426;
+  animation: sc-dash linear infinite both;
+  opacity: 0.9;
+}
+@keyframes sc-ring {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+.sc-ring { animation: sc-ring 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+@keyframes sc-sweep {
+  0% { transform: translateX(-120%) skewX(-20deg); }
+  60%, 100% { transform: translateX(220%) skewX(-20deg); }
+}
+.sc-sweep {
+  background: linear-gradient(90deg, transparent, rgba(255, 75, 31, 0.22), transparent);
+  width: 50%;
+  animation: sc-sweep 3.6s ease-in-out infinite;
+}
+@keyframes sc-core-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 75, 31, 0.6); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 75, 31, 0); }
+}
+.sc-core-dot { animation: sc-core-dot 1.6s ease-in-out infinite; }
+@keyframes sc-drop {
+  from { transform: translate(-50%, -120%); }
+  to { transform: translate(-50%, 340%); }
+}
+.sc-drop { animation: sc-drop 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .sc-dash, .sc-ring, .sc-sweep, .sc-core-dot, .sc-drop { animation: none !important; }
+}
+
+/* ---------- Journey waves ---------- */
+@keyframes ct-flow {
+  from { stroke-dashoffset: 1690; }
+  to { stroke-dashoffset: 0; }
+}
+.ct-flow {
+  stroke-dashoffset: 1690;
+  animation: ct-flow linear infinite both;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-flow { animation: none !important; display: none; }
+}
+
+/* ---------- AI in action ---------- */
+@keyframes aia-timer {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.aia-timer { animation: aia-timer 5s linear forwards; }
+/* Visuals were built as small cards: stretch them to fill the stage and scale up their content */
+.aia-stage > div {
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+@media (min-width: 640px) {
+  .aia-stage > div { font-size: 125%; }
+  .aia-stage .text-\[10px\] { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aia-timer { animation-duration: 12s; }
+}

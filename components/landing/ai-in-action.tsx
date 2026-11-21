@@ -155,7 +155,7 @@ function AIUnderstandingVisual({ isActive }: { isActive: boolean }) {
       {/* Orbiting keywords */}
       {keywords.map((keyword, i) => {
         const angle = (i / keywords.length) * Math.PI * 2 - Math.PI / 2;
-        const radius = 55;
+        const radius = 78;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
         
@@ -586,15 +586,11 @@ export function AIInAction() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.1 });
   const [activeStep, setActiveStep] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-  // Auto-advance through steps
-  useEffect(() => {
-    if (!isInView) return;
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % steps.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isInView]);
+  // Steps advance when the active step's timer bar finishes (see onAnimationEnd),
+  // so pausing on hover is just pausing that CSS animation.
+  const next = () => setActiveStep((prev) => (prev + 1) % steps.length);
 
   return (
     <section ref={containerRef} className="relative py-24 md:py-32 overflow-hidden">
@@ -634,103 +630,117 @@ export function AIInAction() {
           </motion.p>
         </div>
 
-        {/* Steps Grid */}
-        <div className="grid md:grid-cols-5 gap-4">
-          {steps.map((step, index) => {
-            const VisualComponent = step.visual;
-            const isActive = activeStep === index;
-            
-            return (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.1 }}
-                className={`relative cursor-pointer transition-all duration-500 ${
-                  isActive ? "opacity-100" : "opacity-60 hover:opacity-90"
-                }`}
-                onClick={() => setActiveStep(index)}
-              >
-                {/* Card container */}
-                <motion.div
-                  className="relative rounded-3xl overflow-hidden"
-                  animate={{ 
-                    y: isActive ? -8 : 0,
-                    boxShadow: isActive 
-                      ? `0 20px 40px -12px ${step.color}30` 
-                      : "0 4px 6px -1px rgba(0, 0, 0, 0.05)"
-                  }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {/* Step number badge */}
-                  <motion.div
-                    className="absolute -top-0 left-4 px-3 py-1 text-xs font-bold rounded-b-lg z-20"
-                    style={{ 
-                      backgroundColor: isActive ? step.color : "#e5e7eb",
-                      color: isActive ? "white" : "#6b7280"
-                    }}
-                    animate={{ scale: isActive ? 1.05 : 1 }}
-                  >
-                    {step.number}
-                  </motion.div>
-
-                  {/* Visual */}
-                  <VisualComponent isActive={isActive} />
-
-                  {/* Content */}
-                  <div className="p-4 bg-white border-t border-gray-100">
-                    <motion.h3
-                      className="font-serif text-base text-foreground mb-1.5 transition-colors duration-300"
-                      style={{ color: isActive ? step.color : undefined }}
-                    >
-                      {step.title}
-                    </motion.h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                </motion.div>
-
-                {/* Active indicator bar */}
-                <motion.div
-                  className="mt-3 h-1 rounded-full mx-4"
-                  style={{ backgroundColor: step.color }}
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: isActive ? 1 : 0 }}
-                  transition={{ duration: 0.4 }}
-                />
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Progress dots */}
-        <div className="mt-12 flex justify-center gap-2">
-          {steps.map((step, i) => (
-            <motion.button
-              key={i}
-              className="w-2.5 h-2.5 rounded-full transition-all duration-300"
-              style={{ 
-                backgroundColor: activeStep === i ? step.color : "#e5e7eb",
-              }}
-              animate={{ scale: activeStep === i ? 1.3 : 1 }}
-              whileHover={{ scale: 1.2 }}
-              onClick={() => setActiveStep(i)}
-            />
-          ))}
-        </div>
-
-        {/* Auto-play indicator */}
-        <motion.div 
-          className="mt-6 text-center"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1 }}
+        <div
+          className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-10 items-stretch"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
-          <span className="text-xs text-muted-foreground">
-            Auto-playing • Click any step to explore
-          </span>
-        </motion.div>
+          {/* Step list */}
+          <ol className="order-2 lg:order-1 flex flex-col gap-2" role="tablist" aria-label="How the agent works">
+            {steps.map((step, index) => {
+              const isActive = activeStep === index;
+              return (
+                <motion.li
+                  key={step.number}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: 0.15 + index * 0.07, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActiveStep(index)}
+                    className={`group relative w-full overflow-hidden rounded-2xl border text-left transition-all duration-500 ${
+                      isActive
+                        ? "border-transparent bg-white shadow-[0_18px_40px_-18px_rgba(0,0,0,0.25)]"
+                        : "border-border/50 bg-white/40 hover:bg-white/80"
+                    }`}
+                  >
+                    <div className="flex items-start gap-4 p-4 sm:p-5">
+                      <span
+                        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold transition-colors duration-500"
+                        style={{
+                          backgroundColor: isActive ? step.color : "hsl(var(--secondary))",
+                          color: isActive ? "#fff" : "hsl(var(--muted-foreground))",
+                        }}
+                      >
+                        {step.number}
+                      </span>
+                      <div className="min-w-0">
+                        <h3
+                          className="font-serif text-lg leading-snug transition-colors duration-500"
+                          style={{ color: isActive ? step.color : undefined }}
+                        >
+                          {step.title}
+                        </h3>
+                        <AnimatePresence initial={false}>
+                          {isActive && (
+                            <motion.p
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                              className="overflow-hidden text-sm leading-relaxed text-muted-foreground"
+                            >
+                              <span className="block pt-1.5">{step.description}</span>
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                    {/* Timer bar */}
+                    {isActive && isInView && (
+                      <span
+                        key={`bar-${activeStep}`}
+                        className="aia-timer absolute bottom-0 left-0 h-[3px] w-full origin-left"
+                        style={{
+                          backgroundColor: step.color,
+                          animationPlayState: paused ? "paused" : "running",
+                        }}
+                        onAnimationEnd={next}
+                      />
+                    )}
+                  </button>
+                </motion.li>
+              );
+            })}
+          </ol>
+
+          {/* Stage */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="order-1 lg:order-2 relative"
+          >
+            <div
+              className="absolute -inset-4 rounded-[2.5rem] blur-2xl transition-colors duration-700"
+              style={{ backgroundColor: `${steps[activeStep].color}1f` }}
+              aria-hidden="true"
+            />
+            <div className="relative h-full min-h-[18rem] sm:min-h-[22rem] overflow-hidden rounded-3xl border border-border/40 bg-white shadow-[0_30px_80px_-40px_rgba(0,0,0,0.35)]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeStep}
+                  initial={{ opacity: 0, scale: 0.98, y: 12 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -12 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  className="aia-stage absolute inset-0"
+                >
+                  {(() => {
+                    const Visual = steps[activeStep].visual;
+                    return <Visual isActive />;
+                  })()}
+                </motion.div>
+              </AnimatePresence>
+              <div className="pointer-events-none absolute bottom-4 right-4 rounded-full bg-white/80 px-3 py-1 font-mono text-[11px] text-muted-foreground backdrop-blur">
+                Step {steps[activeStep].number} / 0{steps.length}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
