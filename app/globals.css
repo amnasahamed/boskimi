@@ -513,16 +513,21 @@
   to { transform: scaleX(1); }
 }
 .aia-timer { animation: aia-timer 5s linear forwards; }
-/* Visuals were built as small cards: stretch them to fill the stage and scale up their content */
-.aia-stage > div {
-  height: 100% !important;
-  border: 0 !important;
-  border-radius: 0 !important;
+@keyframes av-pulse {
+  0% { stroke-dashoffset: 14; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { stroke-dashoffset: -100; opacity: 0; }
 }
-@media (min-width: 640px) {
-  .aia-stage > div { font-size: 125%; }
-  .aia-stage .text-\[10px\] { font-size: 12px; }
+@keyframes av-pulse-rev {
+  0% { stroke-dashoffset: -100; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { stroke-dashoffset: 14; opacity: 0; }
 }
+.av-pulse, .av-pulse-rev { opacity: 0; animation: av-pulse 0.9s ease-in-out both; }
+.av-pulse-rev { animation-name: av-pulse-rev; }
 @media (prefers-reduced-motion: reduce) {
   .aia-timer { animation-duration: 12s; }
+  .av-pulse, .av-pulse-rev { animation: none; }
 }
