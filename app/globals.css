@@ -531,3 +531,18 @@
   .aia-timer { animation-duration: 12s; }
   .av-pulse, .av-pulse-rev { animation: none; }
 }
+
+/* ---------- Constellation ---------- */
+@keyframes cs-twinkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.9; }
+}
+.cs-twinkle { opacity: 0; animation: cs-twinkle 3.6s ease-in-out infinite; }
+@keyframes cs-pulse {
+  0%, 100% { transform: scale(0.8); opacity: 0.7; }
+  50% { transform: scale(1.25); opacity: 1; }
+}
+.cs-pulse { animation: cs-pulse 2.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .cs-twinkle, .cs-pulse { animation: none !important; }
+}

@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { Users, MapPin, Heart, Lightbulb, HandHeart, ShieldCheck, Sparkles } from "lucide-react";
+import { Users, MapPin, Lightbulb, HandHeart, ShieldCheck, Sparkles, Check, ClipboardList, Rocket, Globe2 } from "lucide-react";
 
 const values = [
   {
@@ -31,26 +31,102 @@ const values = [
   },
 ];
 
-// Animated stat counter
-function StatCard({ value, label, icon: Icon, delay }: { value: string; label: string; icon: any; delay: number }) {
+const wasteList = [
+  { task: "Copying orders from WhatsApp into Excel", hours: 6 },
+  { task: "Answering \u201cwhere is my order?\u201d by hand", hours: 8 },
+  { task: "Chasing leads who never reply", hours: 5 },
+  { task: "Building the weekly report from 4 tools", hours: 4 },
+  { task: "Re-typing invoices into accounting", hours: 3 },
+];
+
+/** A to-do list of busywork that gets struck off, one task at a time. */
+function WasteList({ start }: { start: boolean }) {
+  const [done, setDone] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDone(wasteList.length);
+      return;
+    }
+    const timers = wasteList.map((_, i) => setTimeout(() => setDone(i + 1), 900 + i * 700));
+    return () => timers.forEach(clearTimeout);
+  }, [start]);
+
+  const saved = wasteList.slice(0, done).reduce((sum, w) => sum + w.hours, 0);
+  const total = wasteList.reduce((sum, w) => sum + w.hours, 0);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="relative group"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="relative p-4 sm:p-6 bg-card/50 border border-border/50 rounded-xl sm:rounded-2xl backdrop-blur-sm">
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-primary/20 transition-colors">
-          <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+    <div className="relative">
+      <div className="absolute -inset-6 rounded-[2.5rem] bg-primary/5 blur-2xl" aria-hidden="true" />
+      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-[0_30px_80px_-40px_rgba(0,0,0,0.35)]">
+        {/* header */}
+        <div className="flex items-center justify-between border-b border-border/60 px-5 py-4 sm:px-6">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">A typical week</p>
+            <p className="font-serif text-xl text-foreground">Things software should do</p>
+          </div>
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <ClipboardList className="h-4 w-4" />
+          </span>
         </div>
-        <div className="font-serif text-2xl sm:text-3xl text-foreground mb-1">{value}</div>
-        <div className="text-xs sm:text-sm text-muted-foreground">{label}</div>
+
+        {/* list */}
+        <ul className="divide-y divide-border/50">
+          {wasteList.map((w, i) => {
+            const isDone = i < done;
+            return (
+              <li key={w.task} className="flex items-center gap-3 px-5 py-3.5 sm:px-6">
+                <span
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors duration-300 ${
+                    isDone ? "border-emerald-500 bg-emerald-500 text-white" : "border-border bg-background"
+                  }`}
+                >
+                  {isDone && (
+                    <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 20 }}>
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </motion.span>
+                  )}
+                </span>
+                <span className="relative min-w-0 flex-1 text-sm text-foreground">
+                  <span className={`transition-colors duration-500 ${isDone ? "text-muted-foreground" : ""}`}>{w.task}</span>
+                  <motion.span
+                    className="absolute left-0 top-1/2 h-px bg-muted-foreground"
+                    initial={{ width: 0 }}
+                    animate={{ width: isDone ? "100%" : 0 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                </span>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] transition-colors duration-300 ${
+                    isDone ? "bg-emerald-50 text-emerald-600" : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  {isDone ? "automated" : `${w.hours} h/wk`}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* total */}
+        <div className="flex items-end justify-between gap-4 bg-secondary/40 px-5 py-5 sm:px-6">
+          <div>
+            <p className="text-xs text-muted-foreground">Hours given back, every week</p>
+            <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-border sm:w-56">
+              <motion.div
+                className="h-full rounded-full bg-primary"
+                animate={{ width: `${(saved / total) * 100}%` }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </div>
+          </div>
+          <motion.span key={saved} initial={{ y: 6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="font-serif text-4xl tabular-nums text-foreground">
+            {saved}
+            <span className="text-lg text-muted-foreground"> h</span>
+          </motion.span>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -62,8 +138,6 @@ export function WhoWeAre() {
     <section id="who-we-are" ref={containerRef} className="scroll-mt-24 relative py-24 md:py-32 overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header */}
@@ -112,46 +186,32 @@ export function WhoWeAre() {
               </p>
             </motion.div>
 
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.35 }}
+              className="mt-8 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+            >
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5">
+                <MapPin className="h-3.5 w-3.5 text-primary" /> Kozhikode, Kerala
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5">
+                <Rocket className="h-3.5 w-3.5 text-primary" /> KSUM-recognised startup
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5">
+                <Globe2 className="h-3.5 w-3.5 text-primary" /> Clients in 8 countries
+              </span>
+            </motion.div>
           </div>
 
-          {/* Right - Video */}
+          {/* Right - the waste list */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="relative order-first lg:order-last"
+            transition={{ delay: 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <motion.div
-              className="aspect-[4/3] sm:aspect-video lg:aspect-square overflow-hidden relative rounded-lg sm:rounded-none"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-cover"
-              >
-                <source src="/videos/who-we-are.mp4" type="video/mp4" />
-              </video>
-              {/* Edge fade masks - all 4 sides blending into background */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-x-0 top-0 h-8 sm:h-16 bg-gradient-to-b from-background to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 h-8 sm:h-16 bg-gradient-to-t from-background to-transparent" />
-                <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-background to-transparent" />
-                <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-background to-transparent" />
-              </div>
-            </motion.div>
+            <WasteList start={isInView} />
           </motion.div>
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 lg:mb-20">
-          <StatCard value="118" label="Websites delivered" icon={Heart} delay={0.1} />
-          <StatCard value="100+" label="Businesses served" icon={Users} delay={0.2} />
-          <StatCard value="4" label="Core team" icon={Sparkles} delay={0.3} />
-          <StatCard value="30" label="Day avg delivery" icon={Lightbulb} delay={0.4} />
         </div>
 
         {/* Values grid */}

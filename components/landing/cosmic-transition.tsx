@@ -1,33 +1,106 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useScroll, useTransform, animate } from "framer-motion";
-import { Sparkles, ArrowDown } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { motion, useInView, animate } from "framer-motion";
+import { Sparkles, ArrowUpRight } from "lucide-react";
+import { websites } from "@/lib/portfolio";
 
-// Gentle waves that sit in the top and bottom bands, away from the text.
-const waves = [
-  { d: "M-40 52 C 220 18, 420 92, 720 54 S 1220 16, 1480 60", color: "hsl(250 80% 65%)", w: 1.25 },
-  { d: "M-40 86 C 260 56, 520 122, 780 86 S 1240 56, 1480 94", color: "hsl(217 91% 60%)", w: 1.5 },
-  { d: "M-40 520 C 240 556, 500 486, 760 520 S 1220 556, 1480 512", color: "hsl(189 94% 43%)", w: 1.5 },
-  { d: "M-40 556 C 220 590, 480 524, 720 558 S 1200 592, 1480 546", color: "hsl(221 83% 53%)", w: 2 },
+/*
+ * "Every star in the constellation is a system we've built" — rendered literally:
+ * each star is a client site from the portfolio, grouped into industry
+ * constellations. The case studies are the bright, named stars.
+ */
+
+const W = 1000;
+const H = 520;
+
+const groups = [
+  { name: "Services & Trades", cx: 210, cy: 160, cats: ["Services", "Design", "Construction", "Contracting", "Printing", "Packaging"] },
+  { name: "Corporate & Trading", cx: 520, cy: 150, cats: ["Corporate", "Trading", "Marketplace", "Jewelry"] },
+  { name: "Industry & Tech", cx: 810, cy: 175, cats: ["Technology", "Manufacturing", "Energy", "Automotive", "Automation"] },
+  { name: "Food, Retail & Travel", cx: 250, cy: 390, cats: ["Restaurant", "Retail", "Catering", "Hospitality", "Travel", "Events"] },
+  { name: "Logistics", cx: 540, cy: 330, cats: ["Transport", "Logistics"] },
+  { name: "Education & Health", cx: 790, cy: 400, cats: ["Education", "Healthcare", "Sports", "Fitness", "Media"] },
 ];
 
-// A few "stars" along the waves
-const stars = [
-  { x: 180, y: 40, r: 2.5 },
-  { x: 540, y: 78, r: 2 },
-  { x: 980, y: 52, r: 3 },
-  { x: 1300, y: 84, r: 2 },
-  { x: 300, y: 536, r: 2 },
-  { x: 760, y: 520, r: 3 },
-  { x: 1120, y: 548, r: 2.5 },
+const featured = [
+  { name: "Navakeralam", href: "/case-studies/navakeralam", group: 1, dx: -40, dy: 30 },
+  { name: "Badria Sweets", href: "/case-studies/badria-sweets", group: 3, dx: 70, dy: -40 },
+  { name: "Clapsboard", href: "/case-studies/clapsboard", group: 2, dx: -60, dy: 55 },
+  { name: "ClapsLearn AI", href: "/case-studies/clapslearn-ai", group: 5, dx: -80, dy: -55 },
 ];
 
 const stats = [
-  { value: 118, suffix: "", label: "Websites Delivered" },
-  { value: 100, suffix: "+", label: "Businesses Served" },
+  { value: 118, suffix: "", label: "Websites delivered" },
+  { value: 100, suffix: "+", label: "Businesses served" },
   { value: 8, suffix: "", label: "Countries" },
+  { value: 28, suffix: "", label: "Industries" },
 ];
+
+// Small deterministic PRNG so the sky is identical on server and client.
+function rng(seed: number) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+type Star = { x: number; y: number; r: number; label: string; cat: string; g: number; delay: number };
+
+function buildSky() {
+  const rand = rng(42);
+  const sites = websites.filter((w) => !w.isInternal);
+  const byGroup: Star[][] = groups.map(() => []);
+
+  sites.forEach((site) => {
+    let g = groups.findIndex((gr) => gr.cats.includes(site.category));
+    if (g < 0) g = 0;
+    const n = byGroup[g].length;
+    // golden-angle scatter around the group centre, with a little jitter
+    const angle = n * 2.39996 + rand() * 0.6;
+    const radius = 18 + Math.sqrt(n) * 21 + rand() * 10;
+    byGroup[g].push({
+      x: Math.round((groups[g].cx + Math.cos(angle) * radius * 1.35) * 10) / 10,
+      y: Math.round((groups[g].cy + Math.sin(angle) * radius * 0.8) * 10) / 10,
+      r: Math.round((1.4 + rand() * 1.6) * 10) / 10,
+      label: site.url,
+      cat: site.category,
+      g,
+      delay: Math.round(rand() * 40) / 10,
+    });
+  });
+
+  // Constellation lines: link each star to its nearest earlier star in the group.
+  const lines: { x1: number; y1: number; x2: number; y2: number; g: number; i: number }[] = [];
+  byGroup.forEach((stars, g) => {
+    stars.forEach((s, i) => {
+      if (i === 0) return;
+      let best = 0;
+      let bd = Infinity;
+      for (let j = 0; j < i; j++) {
+        const d = (stars[j].x - s.x) ** 2 + (stars[j].y - s.y) ** 2;
+        if (d < bd) {
+          bd = d;
+          best = j;
+        }
+      }
+      lines.push({ x1: stars[best].x, y1: stars[best].y, x2: s.x, y2: s.y, g, i });
+    });
+  });
+
+  // Case studies sit on a real star: the one nearest their intended spot.
+  const feats = featured.map((f) => {
+    const tx = groups[f.group].cx + f.dx;
+    const ty = groups[f.group].cy + f.dy;
+    const pool = byGroup[f.group];
+    const near = pool.reduce((a, b) => ((b.x - tx) ** 2 + (b.y - ty) ** 2 < (a.x - tx) ** 2 + (a.y - ty) ** 2 ? b : a), pool[0]);
+    return { ...f, x: near.x, y: near.y };
+  });
+
+  return { stars: byGroup.flat(), lines, feats };
+}
 
 function CountUp({ value, suffix, start, delay }: { value: number; suffix: string; start: boolean; delay: number }) {
   const [n, setN] = useState(0);
@@ -37,13 +110,8 @@ function CountUp({ value, suffix, start, delay }: { value: number; suffix: strin
       setN(value);
       return;
     }
-    const controls = animate(0, value, {
-      duration: 1.6,
-      delay,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => setN(Math.round(v)),
-    });
-    return () => controls.stop();
+    const c = animate(0, value, { duration: 1.6, delay, ease: [0.22, 1, 0.36, 1], onUpdate: (v) => setN(Math.round(v)) });
+    return () => c.stop();
   }, [start, value, delay]);
   return (
     <span className="tabular-nums">
@@ -54,188 +122,201 @@ function CountUp({ value, suffix, start, delay }: { value: number; suffix: strin
 }
 
 export function CosmicTransition() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.35 });
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-  // Subtle parallax only — the content never fades out while it is on screen.
-  const contentY = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  const wavesY = useTransform(scrollYProgress, [0, 1], [30, -30]);
-
-  // The waves live in two fixed-height bands pinned to the section's top and
-  // bottom edges, so they never cross the text however tall it gets (mobile).
-  const renderBand = (band: "top" | "bottom") => (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox={band === "top" ? "0 0 1440 140" : "0 460 1440 140"}
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0"
-    >
-          <defs>
-            {waves.map((w, i) => (
-              <linearGradient key={i} id={`ct-grad-${band}-${i}`} x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor={w.color} stopOpacity="0" />
-                <stop offset="25%" stopColor={w.color} stopOpacity="0.55" />
-                <stop offset="75%" stopColor={w.color} stopOpacity="0.55" />
-                <stop offset="100%" stopColor={w.color} stopOpacity="0" />
-              </linearGradient>
-            ))}
-          </defs>
-
-          {waves.map((w, i) => (
-            <g key={i}>
-              {/* the line draws in once, fully */}
-              <motion.path
-                d={w.d}
-                fill="none"
-                stroke={`url(#ct-grad-${band}-${i})`}
-                strokeWidth={w.w}
-                strokeLinecap="round"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={isInView ? { pathLength: 1, opacity: 1 } : {}}
-                transition={{ duration: 2.2, delay: 0.15 * i, ease: [0.22, 1, 0.36, 1] }}
-              />
-              {/* then a light pulse keeps flowing along it */}
-              {isInView && (
-                <path
-                  d={w.d}
-                  fill="none"
-                  stroke={w.color}
-                  strokeWidth={w.w + 0.75}
-                  strokeLinecap="round"
-                  strokeDasharray="90 1600"
-                  className="ct-flow"
-                  style={{ animationDelay: `${2 + i * 0.9}s`, animationDuration: `${7 + i}s` }}
-                />
-              )}
-            </g>
-          ))}
-
-          {stars.map((s, i) => (
-            <motion.circle
-              key={i}
-              cx={s.x}
-              cy={s.y}
-              r={s.r}
-              fill="hsl(14 100% 56%)"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={isInView ? { opacity: [0, 0.9, 0.35, 0.9], scale: 1 } : {}}
-              transition={{
-                opacity: { duration: 3.2, delay: 1 + i * 0.25, repeat: Infinity, repeatType: "mirror" },
-                scale: { duration: 0.6, delay: 1 + i * 0.25 },
-              }}
-              style={{ transformOrigin: `${s.x}px ${s.y}px` }}
-            />
-          ))}
-    </svg>
-  );
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
+  const { stars, lines, feats } = useMemo(buildSky, []);
+  const [hover, setHover] = useState<Star | null>(null);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden py-32 md:py-44"
-    >
-      {/* Soft centre glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 45% at 50% 50%, hsl(14 100% 56% / 0.06), transparent 70%)",
-        }}
-      />
-
-      {/* Waves */}
-      <motion.div style={{ y: wavesY }} className="absolute inset-x-0 top-0 h-28 md:h-40 pointer-events-none" aria-hidden="true">
-        {renderBand("top")}
-      </motion.div>
-      <motion.div style={{ y: wavesY }} className="absolute inset-x-0 bottom-0 h-28 md:h-40 pointer-events-none" aria-hidden="true">
-        {renderBand("bottom")}
-      </motion.div>
-
-      {/* Content */}
-      <motion.div style={{ y: contentY }} className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-primary/80 mb-8"
-        >
-          <Sparkles className="w-4 h-4" />
-          The Journey Begins
-        </motion.div>
-
-        <blockquote className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
-          <motion.span
-            className="inline-block"
+    <section ref={ref} className="relative overflow-hidden py-24 md:py-32">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-12">
+        {/* Header */}
+        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="mb-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-primary/80"
+          >
+            <Sparkles className="h-4 w-4" />
+            The Journey Begins
+          </motion.div>
+          <motion.h2
             initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-            animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+            animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="font-serif text-3xl leading-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl"
           >
             <span className="italic text-primary">Every star</span> in the constellation
-          </motion.span>
-          <br className="hidden sm:block" />{" "}
-          <motion.span
-            className="inline-block text-muted-foreground"
-            initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-            animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-            transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            <br className="hidden sm:block" /> <span className="text-muted-foreground">is a system we&apos;ve built</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
-            is a system we&apos;ve built
-          </motion.span>
-        </blockquote>
-
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12"
-        >
-          From scattered ideas to connected solutions — we help businesses
-          find their orbit and shine brighter.
-        </motion.p>
-
-        <div className="flex flex-wrap justify-center gap-6 md:gap-0 md:divide-x md:divide-border/60">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.55 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-center md:px-12"
-            >
-              <div className="font-serif text-4xl md:text-5xl text-foreground mb-2">
-                <CountUp value={stat.value} suffix={stat.suffix} start={isInView} delay={0.6 + i * 0.1} />
-              </div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground font-mono">{stat.label}</div>
-            </motion.div>
-          ))}
+            Each point of light below is a real client project, grouped by industry. Hover or tap to see who&apos;s up
+            there.
+          </motion.p>
         </div>
 
-        <motion.a
-          href="#who-we-are"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.2 }}
-          className="mt-16 inline-flex flex-col items-center gap-2 group"
+        {/* Sky */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-hidden rounded-[2rem] bg-[#07070c] shadow-[0_40px_100px_-50px_rgba(255,75,31,0.45)]"
         >
-          <span className="text-xs text-muted-foreground uppercase tracking-widest group-hover:text-foreground transition-colors">
-            Discover
-          </span>
-          <motion.span
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-border/70 group-hover:border-primary/60 transition-colors"
-          >
-            <ArrowDown className="w-3.5 h-3.5 text-primary" />
-          </motion.span>
-        </motion.a>
-      </motion.div>
+          {/* nebula */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 45% 50% at 25% 35%, rgba(255,75,31,0.16), transparent 70%), radial-gradient(ellipse 40% 45% at 80% 70%, rgba(99,102,241,0.18), transparent 70%), radial-gradient(ellipse 30% 35% at 55% 30%, rgba(14,165,233,0.10), transparent 70%)",
+            }}
+          />
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+          <div className="relative">
+            <svg
+              viewBox={`0 0 ${W} ${H}`}
+              className="block h-auto w-full"
+              role="img"
+              aria-label="Constellation of client projects grouped by industry"
+            >
+              <defs>
+                <radialGradient id="cs-glow">
+                  <stop offset="0%" stopColor="#FF4B1F" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#FF4B1F" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              {/* constellation lines */}
+              {lines.map((l, k) => (
+                <motion.line
+                  key={k}
+                  x1={l.x1}
+                  y1={l.y1}
+                  x2={l.x2}
+                  y2={l.y2}
+                  stroke="#ffffff"
+                  strokeWidth={0.8}
+                  initial={{ pathLength: 0, strokeOpacity: 0.14 }}
+                  animate={
+                    inView
+                      ? { pathLength: 1, strokeOpacity: hover && hover.g === l.g ? 0.5 : 0.14 }
+                      : {}
+                  }
+                  transition={{
+                    pathLength: { duration: 0.5, delay: 0.6 + l.g * 0.25 + l.i * 0.03, ease: "easeOut" },
+                    strokeOpacity: { duration: 0.3 },
+                  }}
+                />
+              ))}
+
+              {/* stars */}
+              {stars.map((s, k) => (
+                <g key={k} onMouseEnter={() => setHover(s)} onMouseLeave={() => setHover(null)} className="cursor-pointer">
+                  <circle cx={s.x} cy={s.y} r={10} fill="transparent" />
+                  <motion.circle
+                    cx={s.x}
+                    cy={s.y}
+                    fill={hover && hover.g === s.g ? "#ffffff" : "#d9d6e6"}
+                    initial={{ r: 0 }}
+                    animate={inView ? { r: hover === s ? s.r + 2.5 : s.r } : {}}
+                    transition={{ duration: 0.4, delay: hover ? 0 : 0.4 + s.g * 0.25 + (k % 20) * 0.02 }}
+                  />
+                  <circle cx={s.x} cy={s.y} r={s.r} fill="#fff" className="cs-twinkle" style={{ animationDelay: `${s.delay}s` }} />
+                </g>
+              ))}
+
+              {/* group labels */}
+              {groups.map((g, i) => (
+                <motion.text
+                  key={g.name}
+                  x={g.cx}
+                  y={i < 3 ? 34 : H - 22}
+                  textAnchor="middle"
+                  fill="rgba(255,255,255,0.45)"
+                  style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase" }}
+                  className="font-mono"
+                  initial={{ opacity: 0 }}
+                  animate={inView ? { opacity: 1 } : {}}
+                  transition={{ delay: 1.2 + i * 0.15 }}
+                >
+                  {g.name}
+                </motion.text>
+              ))}
+
+              {/* featured case-study stars */}
+              {feats.map((f, i) => {
+                const { x, y } = f;
+                return (
+                  <motion.g
+                    key={f.name}
+                    initial={{ opacity: 0 }}
+                    animate={inView ? { opacity: 1 } : {}}
+                    transition={{ delay: 1.6 + i * 0.2, duration: 0.6 }}
+                  >
+                    <Link href={f.href} aria-label={`${f.name} case study`}>
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={20}
+                        fill="url(#cs-glow)"
+                        className="cs-pulse"
+                        style={{ animationDelay: `${i * 0.6}s`, transformOrigin: `${x}px ${y}px` }}
+                      />
+                      <circle cx={x} cy={y} r={4.5} fill="#FF4B1F" />
+                      <circle cx={x} cy={y} r={1.8} fill="#fff" />
+                      <text x={x + 11} y={y + 4} fill="#fff" style={{ fontSize: 15, fontWeight: 500, paintOrder: "stroke", stroke: "#07070c", strokeWidth: 4 }}>
+                        {f.name}
+                      </text>
+                    </Link>
+                  </motion.g>
+                );
+              })}
+            </svg>
+
+            {/* tooltip */}
+            {hover && (
+              <div
+                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg border border-white/10 bg-black/80 px-2.5 py-1.5 text-center backdrop-blur"
+                style={{ left: `${(hover.x / W) * 100}%`, top: `calc(${(hover.y / H) * 100}% - 10px)` }}
+              >
+                <span className="block whitespace-nowrap text-xs font-medium text-white">{hover.label}</span>
+                <span className="block text-[10px] uppercase tracking-wider text-white/50">{hover.cat}</span>
+              </div>
+            )}
+          </div>
+
+          {/* stats strip */}
+          <div className="relative grid grid-cols-2 border-t border-white/10 sm:grid-cols-4">
+            {stats.map((s, i) => (
+              <div
+                key={s.label}
+                className={`px-4 py-5 text-center sm:py-6 ${i % 2 === 1 ? "border-l border-white/10" : ""} ${
+                  i >= 2 ? "border-t border-white/10 sm:border-t-0" : ""
+                } ${i === 2 ? "sm:border-l" : ""}`}
+              >
+                <div className="font-serif text-3xl text-white md:text-4xl">
+                  <CountUp value={s.value} suffix={s.suffix} start={inView} delay={0.8 + i * 0.1} />
+                </div>
+                <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        <div className="mt-6 text-center">
+          <Link
+            href="/portfolio"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-primary"
+          >
+            See the full portfolio <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
     </section>
   );
 }
