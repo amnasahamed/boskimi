@@ -12,16 +12,23 @@ const navItems = [
   { label: "Careers", href: "/careers" },
 ];
 
-export function ConstellationNav() {
+export function ConstellationNav({ revealAfterHero = false }: { revealAfterHero?: boolean } = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // On the homepage the video hero has its own header, so this nav stays
+  // hidden until the visitor scrolls past the hero.
+  const [pastHero, setPastHero] = useState(!revealAfterHero);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 100);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 100);
+      if (revealAfterHero) setPastHero(window.scrollY > window.innerHeight * 0.85);
+    };
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [revealAfterHero]);
 
   return (
     <>
@@ -29,7 +36,10 @@ export function ConstellationNav() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        aria-hidden={!pastHero}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+          pastHero ? "" : "!-translate-y-full !opacity-0 pointer-events-none"
+        } ${
           scrolled 
             ? "bg-background/80 backdrop-blur-xl border-b border-border/30" 
             : "bg-transparent"
