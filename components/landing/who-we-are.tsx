@@ -148,8 +148,8 @@ export function WhoWeAre() {
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 lg:mb-20">
-          <StatCard value="147" label="Projects shipped" icon={Heart} delay={0.1} />
-          <StatCard value="50+" label="Happy clients" icon={Users} delay={0.2} />
+          <StatCard value="118" label="Websites delivered" icon={Heart} delay={0.1} />
+          <StatCard value="100+" label="Businesses served" icon={Users} delay={0.2} />
           <StatCard value="4" label="Core team" icon={Sparkles} delay={0.3} />
           <StatCard value="30" label="Day avg delivery" icon={Lightbulb} delay={0.4} />
         </div>
