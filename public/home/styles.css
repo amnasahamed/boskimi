@@ -95,6 +95,7 @@ button {
 .header,
 .hero,
 .stats,
+.legal,
 .mobile-menu {
   position: relative;
   z-index: 1;
@@ -382,6 +383,29 @@ button {
   color: var(--muted);
 }
 
+/* ---------- Legal ---------- */
+
+.legal {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: clamp(12px, 2.2vh, 22px);
+  font-size: 11.5px;
+  color: #6f6f6f;
+}
+
+.legal a {
+  color: #8e8e8e;
+  transition: color 0.2s ease;
+}
+
+.legal a:hover {
+  color: #fff;
+}
+
 /* ---------- Entrance animations ---------- */
 
 .anim {
@@ -626,6 +650,11 @@ button {
 
   .sub-short {
     display: inline;
+  }
+
+  .legal > span:first-child,
+  .legal > .legal-sep:nth-child(2) {
+    display: none;
   }
 
   .sub-long {
