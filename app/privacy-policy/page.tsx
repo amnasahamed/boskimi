@@ -339,7 +339,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="rounded-2xl border border-border/50 bg-secondary/20 p-6 space-y-1 text-foreground">
                 <p className="font-medium">{siteConfig.legalName}</p>
-                <p>Attn: Grievance Officer</p>
+                <p>Grievance Officer: Abdulla Rashid M (Co-founder)</p>
                 {siteConfig.address.map((line) => (
                   <p key={line}>{line}</p>
                 ))}
