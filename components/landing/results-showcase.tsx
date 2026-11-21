@@ -1,199 +1,224 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { TrendingUp, Clock, Users, DollarSign, ArrowUpRight, Quote } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { motion, useInView } from "framer-motion";
+import { ArrowUpRight, Check, FolderOpen } from "lucide-react";
 
-const results = [
-  {
-    client: "Navakeralam",
-    industry: "Government Portal",
-    challenge: "10,000+ daily citizen inquiries overwhelming staff",
-    solution: "AI support agent handling 80% of routine queries",
-    metrics: [
-      { icon: Clock, value: "2 min", label: "Avg response (was 4 hrs)", improvement: "120x faster" },
-      { icon: Users, value: "80%", label: "Queries automated" },
-    ],
-    quote: "Our team went from drowning in tickets to actually having time for complex cases that need human judgment.",
-    author: "Project Director",
-    color: "from-emerald-500/20 to-teal-500/20",
-  },
-  {
-    client: "Clapsboard",
-    industry: "Media & Entertainment",
-    challenge: "Manual lead qualification wasting sales team time",
-    solution: "AI lead scoring and instant qualification",
-    metrics: [
-      { icon: TrendingUp, value: "4x", label: "Conversion rate", improvement: "300% increase" },
-      { icon: DollarSign, value: "$50K", label: "Additional revenue/mo" },
-    ],
-    quote: "The AI qualifies leads better than our best salesperson. Sales only talks to prospects who are actually ready to buy.",
-    author: "Head of Sales",
-    color: "from-violet-500/20 to-purple-500/20",
-  },
+/*
+ * Case studies, summarised from the case-study pages themselves.
+ * No invented metrics or quotes: what we built, for whom, and what changed.
+ */
+const cases = [
   {
     client: "Badria Sweets",
-    industry: "E-commerce",
-    challenge: "Order tracking inquiries eating up 6 hours daily",
-    solution: "WhatsApp automation for order updates",
-    metrics: [
-      { icon: Clock, value: "30 hrs", label: "Weekly time saved" },
-      { icon: Users, value: "24/7", label: "Customer support" },
-    ],
-    quote: "Customers get instant order updates at 2 AM. We wake up to happy customers instead of a full inbox.",
-    author: "Operations Manager",
-    color: "from-amber-500/20 to-orange-500/20",
+    meta: "Pastry brand · Saudi Arabia",
+    kind: "WhatsApp AI",
+    problem: "Seasonal floods of WhatsApp enquiries, and agents at risk of quoting the wrong prices.",
+    built: "An Arabic-only, brand-safe AI agent on WhatsApp, orchestrated with n8n, with the team kept in the loop.",
+    outcomes: ["Instant replies to product and price questions", "Zero pricing mistakes via image-based sharing"],
+    stack: ["WATI", "n8n", "AI agent"],
+    image: "/images/case-studies/badria-sweets/badria-whatsapp-user-view.png",
+    href: "/case-studies/badria-sweets",
+    accent: "#22c55e",
+    fit: "contain" as const,
+  },
+  {
+    client: "Navakeralam",
+    meta: "Government of Kerala · India",
+    kind: "Citizen platform",
+    problem: "A state-wide drive to hear every citizen, with volunteers visiting homes across Kerala.",
+    built: "A bilingual, mobile-first public portal integrated with field operations and government standards.",
+    outcomes: ["State-wide reach in Malayalam and English", "Real-time collection and analysis of citizen input"],
+    stack: ["Bilingual", "Mobile-first", "Accessible"],
+    image: "/images/case-studies/navakeralam/banner.png",
+    href: "/case-studies/navakeralam",
+    accent: "#0ea5e9",
+    fit: "cover" as const,
+  },
+  {
+    client: "ClapsLearn AI",
+    meta: "EdTech · India",
+    kind: "AI receptionist",
+    problem: "Admin staff buried under repetitive questions from parents, tutors and visitors.",
+    built: "A custom-trained AI front-office on the website, answering course and schedule questions and handing off to staff.",
+    outcomes: ["24/7 answers, including off-hours", "Staff freed from the same FAQs"],
+    stack: ["Custom KB", "Smart routing", "Human handoff"],
+    image: "/images/case-studies/clapslearn-ai/clapslearn-chat-widget.png",
+    href: "/case-studies/clapslearn-ai",
+    accent: "#8b5cf6",
+    fit: "contain" as const,
+  },
+  {
+    client: "ClapsBoard",
+    meta: "For ClapsLearn · iOS",
+    kind: "Native app",
+    problem: "Teachers needed one dependable teaching tool that works even when classroom internet doesn't.",
+    built: "A native iPad and iPhone whiteboard and classroom hub with local peer-to-peer voice and offline support.",
+    outcomes: ["Works with or without internet", "Teacher and student devices linked locally"],
+    stack: ["SwiftUI", "Peer-to-peer", "Offline-first"],
+    image: "/images/case-studies/clapsboard/banner.png",
+    href: "/case-studies/clapsboard",
+    accent: "#FF4B1F",
+    fit: "cover" as const,
   },
 ];
+
+function CaseCard({ c, index, featured }: { c: (typeof cases)[number]; index: number; featured: boolean }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ duration: 0.7, delay: (index % 2) * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      className={featured ? "md:col-span-2 lg:col-span-3" : ""}
+    >
+      <Link
+        href={c.href}
+        className={`group flex h-full flex-col overflow-hidden rounded-3xl border border-border/60 bg-card transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(0,0,0,0.28)] ${
+          featured ? "lg:grid lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]" : ""
+        }`}
+      >
+        {/* Image */}
+        <div
+          className={`relative overflow-hidden ${featured ? "aspect-[16/10] lg:aspect-auto lg:min-h-[360px]" : "aspect-[16/10]"}`}
+          style={{ background: `linear-gradient(160deg, ${c.accent}1f, ${c.accent}08)` }}
+        >
+          <Image
+            src={c.image}
+            alt={`${c.client} project`}
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className={`transition-transform duration-700 group-hover:scale-[1.04] ${
+              c.fit === "contain" ? "object-contain p-6" : "object-cover"
+            }`}
+          />
+          <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-slate-800 backdrop-blur">
+            {c.kind}
+          </span>
+        </div>
+
+        {/* Body */}
+        <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="font-serif text-2xl text-foreground sm:text-3xl">{c.client}</h3>
+              <p className="mt-0.5 text-sm text-muted-foreground">{c.meta}</p>
+            </div>
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-45"
+              style={{ backgroundColor: `${c.accent}18`, color: c.accent }}
+            >
+              <ArrowUpRight className="h-4 w-4" />
+            </span>
+          </div>
+
+          <div className="space-y-3 text-sm leading-relaxed">
+            <p>
+              <span className="mr-1.5 font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Problem</span>
+              <span className="text-foreground/80">{c.problem}</span>
+            </p>
+            <p>
+              <span className="mr-1.5 font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: c.accent }}>
+                Built
+              </span>
+              <span className="text-foreground/80">{c.built}</span>
+            </p>
+          </div>
+
+          <ul className="space-y-1.5">
+            {c.outcomes.map((o) => (
+              <li key={o} className="flex items-start gap-2 text-sm font-medium text-foreground">
+                <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: c.accent }} strokeWidth={2.5} />
+                {o}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
+            {c.stack.map((s) => (
+              <span key={s} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-muted-foreground">
+                {s}
+              </span>
+            ))}
+            <span className="ml-auto text-sm font-medium text-foreground underline-offset-4 group-hover:underline">
+              Read case study
+            </span>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
 
 export function ResultsShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
 
   return (
-    <section ref={containerRef} className="relative py-24 md:py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background" />
-      
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-primary mb-4"
-          >
-            <TrendingUp className="w-4 h-4" />
-            Real Results
-          </motion.span>
-          
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.1 }}
-            className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground"
-          >
-            Numbers That
-            <br />
-            <span className="italic text-primary">Actually Matter</span>
-          </motion.h2>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2 }}
-            className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg"
-          >
-            Every project we take on has one goal: save time and make money. 
-            Here&apos;s what that looks like in practice.
-          </motion.p>
-        </div>
-
-        {/* Results Cards */}
-        <div className="space-y-8">
-          {results.map((result, index) => (
-            <motion.div
-              key={result.client}
-              initial={{ opacity: 0, y: 40 }}
+    <section ref={containerRef} className="relative overflow-hidden py-24 md:py-32">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 md:px-12">
+        <div className="mb-12 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.2 + index * 0.15 }}
-              className={`group relative p-8 md:p-10 rounded-3xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden`}
+              className="mb-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-primary"
             >
-              {/* Background Gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${result.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-              
-              <div className="relative grid md:grid-cols-12 gap-8 items-center">
-                {/* Left - Client Info */}
-                <div className="md:col-span-3">
-                  <div className="text-sm text-primary font-medium mb-1">{result.client}</div>
-                  <div className="text-sm text-muted-foreground">{result.industry}</div>
-                  
-                  {/* Metrics */}
-                  <div className="mt-6 space-y-4">
-                    {result.metrics.map((metric, i) => (
-                      <div key={i}>
-                        <div className="flex items-center gap-2">
-                          <metric.icon className="w-4 h-4 text-primary" />
-                          <span className="font-serif text-2xl text-foreground">{metric.value}</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">{metric.label}</div>
-                        {metric.improvement && (
-                          <div className="text-xs text-green-500 mt-0.5">{metric.improvement}</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <FolderOpen className="h-4 w-4" />
+              Case Studies
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.1 }}
+              className="font-serif text-4xl text-foreground md:text-5xl lg:text-6xl"
+            >
+              Proof, <span className="italic text-primary">Not Promises</span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2 }}
+              className="mt-4 text-lg text-muted-foreground"
+            >
+              A government platform, a WhatsApp AI agent, an AI receptionist and a native iOS app. Here&apos;s what
+              we actually built.
+            </motion.p>
+          </div>
+          <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.3 }}>
+            <Link
+              href="/case-studies"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-foreground transition-colors hover:text-primary"
+            >
+              All case studies <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+        </div>
 
-                {/* Middle - Challenge & Solution */}
-                <div className="md:col-span-4">
-                  <div className="mb-4">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">The Problem</div>
-                    <p className="text-foreground">{result.challenge}</p>
-                  </div>
-                  <div>
-                    <div className="text-xs text-primary uppercase tracking-wider mb-1">What We Built</div>
-                    <p className="text-muted-foreground">{result.solution}</p>
-                  </div>
-                </div>
-
-                {/* Right - Quote */}
-                <div className="md:col-span-5">
-                  <div className="relative p-6 bg-background/50 rounded-2xl">
-                    <Quote className="absolute -top-3 -left-2 w-8 h-8 text-primary/20" />
-                    <p className="text-foreground italic leading-relaxed mb-4">
-                      &ldquo;{result.quote}&rdquo;
-                    </p>
-                    <div className="text-sm text-muted-foreground">
-                      — {result.author}, {result.client}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {cases.map((c, i) => (
+            <CaseCard key={c.client} c={c} index={i} featured={i === 0} />
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6 }}
-          className="mt-16 text-center"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-12 flex flex-col items-center gap-4 rounded-3xl bg-foreground px-6 py-8 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left"
         >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-6 bg-primary/5 border border-primary/10 rounded-3xl">
-            <div className="text-left">
-              <div className="font-serif text-xl text-foreground">Want results like these?</div>
-              <div className="text-sm text-muted-foreground">Let&apos;s talk about your specific situation</div>
-            </div>
-            <Link
-              href="#connect"
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:shadow-lg transition-all group whitespace-nowrap"
-            >
-              <span>Start Your Project</span>
-              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
+          <div>
+            <p className="font-serif text-2xl text-background">Want a result like these?</p>
+            <p className="text-sm text-background/60">Tell us the problem. We&apos;ll tell you honestly if we can fix it.</p>
           </div>
-        </motion.div>
-
-        {/* Aggregate Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.7 }}
-          className="mt-20 pt-12 border-t border-border/30 grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
-        >
-          {[
-            { value: "118", label: "Websites Delivered" },
-            { value: "100+", label: "Businesses Served" },
-            { value: "8", label: "Countries Served" },
-            { value: "28", label: "Industries" },
-          ].map((stat, i) => (
-            <div key={i}>
-              <div className="font-serif text-4xl text-foreground">{stat.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-            </div>
-          ))}
+          <Link
+            href="#connect"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5"
+          >
+            Start your project <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </motion.div>
       </div>
     </section>
