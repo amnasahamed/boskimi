@@ -1,5 +1,11 @@
 export const siteConfig = {
   name: "Base of Stars",
+  legalName: "Base of Stars Technologies LLP",
+  address: [
+    "No. 457/XIII, Kaliyathodikayil, Adampady",
+    "Nellika Paramba, Mukkam",
+    "Kozhikode, Kerala, India",
+  ],
   tagline: "AI Solutions for Business Growth",
   description:
     "We use AI to solve real business problems. From intelligent automation to custom AI agents, we help businesses work smarter, scale faster, and delight customers.",

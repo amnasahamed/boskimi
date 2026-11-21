@@ -80,7 +80,7 @@ export default function PrivacyPolicyPage() {
 
           <article className="lg:col-span-9 max-w-3xl space-y-12">
             <p className="text-lg text-foreground leading-relaxed">
-              This Privacy Policy explains how {siteConfig.name} (&ldquo;{siteConfig.name}&rdquo;,
+              This Privacy Policy explains how {siteConfig.legalName} (&ldquo;{siteConfig.name}&rdquo;,
               &ldquo;we&rdquo;, &ldquo;us&rdquo; or &ldquo;our&rdquo;) collects, uses, shares and protects
               personal information when you visit {siteConfig.url.replace(/^https?:\/\//, "")} (the
               &ldquo;Website&rdquo;) or use our services, including our WhatsApp Business Platform
@@ -89,7 +89,8 @@ export default function PrivacyPolicyPage() {
 
             <Section id="who-we-are" title={sections[0].title}>
               <p>
-                {siteConfig.name} is a technology company based in India that builds AI solutions,
+                {siteConfig.legalName} is a limited liability partnership incorporated in India, with its
+                registered office at {siteConfig.address.join(", ")}. We build AI solutions,
                 workflow automation and business messaging solutions. For the WhatsApp Business
                 Platform, we act as a Tech Provider: we help businesses (&ldquo;Clients&rdquo;) connect their
                 WhatsApp Business Accounts to our software so they can send and receive messages with
@@ -337,9 +338,11 @@ export default function PrivacyPolicyPage() {
                 data, please contact our Grievance Officer:
               </p>
               <div className="rounded-2xl border border-border/50 bg-secondary/20 p-6 space-y-1 text-foreground">
-                <p className="font-medium">{siteConfig.name}</p>
+                <p className="font-medium">{siteConfig.legalName}</p>
                 <p>Attn: Grievance Officer</p>
-                <p>India</p>
+                {siteConfig.address.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
                 <p>
                   Email: <Mail />
                 </p>

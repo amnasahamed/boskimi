@@ -96,7 +96,7 @@ export default function TermsOfServicePage() {
             <p className="text-lg text-foreground leading-relaxed">
               These Terms of Service (&ldquo;Terms&rdquo;) govern your access to and use of the website at{" "}
               {siteConfig.url.replace(/^https?:\/\//, "")} (the &ldquo;Website&rdquo;) and the products and services
-              provided by {siteConfig.name} (&ldquo;{siteConfig.name}&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo; or &ldquo;our&rdquo;),
+              provided by {siteConfig.legalName} (&ldquo;{siteConfig.name}&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo; or &ldquo;our&rdquo;),
               including our WhatsApp Business Platform solutions, AI agents, workflow automation, web and app
               development and consulting (together, the &ldquo;Services&rdquo;).
             </p>
@@ -253,7 +253,7 @@ export default function TermsOfServicePage() {
 
             <Section id="liability" title={sections[12].title}>
               <p>
-                To the fullest extent permitted by law, {siteConfig.name} will not be liable for any indirect,
+                To the fullest extent permitted by law, {siteConfig.legalName} will not be liable for any indirect,
                 incidental, special, consequential or punitive damages, or for loss of profits, revenue, data or
                 goodwill. Our total liability arising out of or relating to the Services in any 12-month period is
                 limited to the fees you paid us for the Services in the 12 months before the event giving rise to
@@ -263,7 +263,7 @@ export default function TermsOfServicePage() {
 
             <Section id="indemnity" title={sections[13].title}>
               <p>
-                You agree to indemnify and hold harmless {siteConfig.name} and its team from any claims, losses
+                You agree to indemnify and hold harmless {siteConfig.legalName}, its partners and team from any claims, losses
                 and expenses (including reasonable legal fees) arising from your Client Data, the messages you send,
                 your breach of these Terms, or your violation of any law or third-party rights, including Meta and
                 WhatsApp policies.
@@ -274,7 +274,7 @@ export default function TermsOfServicePage() {
               <p>
                 These Terms are governed by the laws of India. Before starting any formal proceedings, both parties
                 will try in good faith to resolve disputes informally within 30 days of written notice. Subject to
-                that, the courts of India shall have exclusive jurisdiction over any dispute arising out of these
+                that, the courts at Kozhikode, Kerala, India shall have exclusive jurisdiction over any dispute arising out of these
                 Terms.
               </p>
             </Section>
@@ -290,8 +290,10 @@ export default function TermsOfServicePage() {
             <Section id="contact" title={sections[16].title}>
               <p>Questions about these Terms can be sent to:</p>
               <div className="rounded-2xl border border-border/50 bg-secondary/20 p-6 space-y-1 text-foreground">
-                <p className="font-medium">{siteConfig.name}</p>
-                <p>India</p>
+                <p className="font-medium">{siteConfig.legalName}</p>
+                {siteConfig.address.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
                 <p>
                   Email: <Mail />
                 </p>

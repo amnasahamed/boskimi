@@ -126,7 +126,7 @@ export function CosmicFooter() {
               className="h-8 w-auto"
             />
             <span className="mono-caption text-muted-foreground">
-              © {new Date().getFullYear()}
+              © {new Date().getFullYear()} Base of Stars Technologies LLP
             </span>
           </div>
 
