@@ -21,6 +21,7 @@ const footerLinks = [
       { label: "Case Studies", href: "/case-studies" },
       { label: "Careers", href: "/careers" },
       { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Service", href: "/terms-of-service" },
     ],
   },
   {
