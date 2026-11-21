@@ -546,3 +546,8 @@
 @media (prefers-reduced-motion: reduce) {
   .cs-twinkle, .cs-pulse { animation: none !important; }
 }
+
+/* ---------- Workflow magic ---------- */
+@keyframes wm-timer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.wm-timer { animation: wm-timer linear forwards; }
+@media (prefers-reduced-motion: reduce) { .wm-timer { animation-duration: 20s !important; } }
